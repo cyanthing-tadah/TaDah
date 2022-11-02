@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
-import { WechatService } from './wechat.service'
 import { WechatController } from './wechat.controller'
+import { WechatService } from './wechat.service'
 
 @Module({
-  providers: [WechatService],
   controllers: [WechatController],
+  providers: [WechatService],
 })
 export class WechatModule {}

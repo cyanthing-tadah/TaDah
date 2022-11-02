@@ -1,10 +1,22 @@
 import * as crypto from 'crypto'
+import { create } from 'xmlbuilder2'
 import { Injectable, Logger } from '@nestjs/common'
 import { AccountConfig } from '../../config/account.config'
 import type { ValidationInterfaces } from './wechat.interface'
 
 @Injectable()
 export class WechatService {
+  /**
+   * 返回微信公众号配置
+   */
+  loadWeixinConfig() {
+    return AccountConfig
+  }
+
+  /**
+   * 校验微信公众号对接合法性
+   * @param validationData
+   */
   async checkSignature(validationData: ValidationInterfaces): Promise<string> {
     try {
       // 1.获取微信服务器Get请求的参数 signature、timestamp、nonce、echostr
@@ -21,8 +33,9 @@ export class WechatService {
       const resultCode = hashCode.update(tmpStr, 'utf8').digest('hex') // 加密
 
       // 4.开发者获得加密后的字符串可与signature对比, 如果相等将echostr返回给微信服务器, 完成接入工作
-      if (resultCode === signature)
+      if (resultCode === signature) {
         return echostr
+      }
 
       return 'mismatch'
     }
@@ -30,5 +43,21 @@ export class WechatService {
       Logger.error(error, '公众号注册验证 生成字串错误')
       return 'mismatch'
     }
+  }
+
+  /**
+   * 处理接收到的微信消息
+   * @param xml
+   */
+  handleReceiveMsg(xml: any) {
+    return create({
+      xml: {
+        ToUserName: xml.FromUserName,
+        FromUserName: xml.ToUserName,
+        CreateTime: new Date().getTime(),
+        MsgType: 'text',
+        Content: '你好',
+      },
+    }).end({ prettyPrint: true })
   }
 }

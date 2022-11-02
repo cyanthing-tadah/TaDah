@@ -1,11 +1,9 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { WechatModule } from './module/wechat/wechat.module';
+import { Module } from '@nestjs/common'
+import { WechatModule } from './module/wechat/wechat.module'
+import { AccountModule } from './module/account/account.module'
 
 @Module({
-  controllers: [AppController],
-  providers: [AppService],
-  imports: [WechatModule],
+  imports: [WechatModule, AccountModule],
 })
 export class AppModule {}
+

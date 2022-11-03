@@ -2,10 +2,13 @@ import * as crypto from 'crypto'
 import { create } from 'xmlbuilder2'
 import { Injectable, Logger } from '@nestjs/common'
 import { AccountConfig } from '../../config/account.config'
+import { AccountService } from '../account/account.service'
 import type { ValidationInterfaces } from './wechat.interface'
 
 @Injectable()
 export class WechatService {
+  constructor(private readonly accountService: AccountService) {}
+
   /**
    * 返回微信公众号配置
    */
@@ -49,7 +52,9 @@ export class WechatService {
    * 处理接收到的微信消息
    * @param xml
    */
-  handleReceiveMsg(xml: any) {
+  async handleReceiveMsg(xml: any) {
+    await this.accountService.saveUserInfo({ openid: xml.FromUserName, headimgurl: '', nickname: xml.FromUserName })
+
     return create({
       xml: {
         ToUserName: xml.FromUserName,

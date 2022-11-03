@@ -1,5 +1,6 @@
 # config
 /src/config/account.config.ts
+/src/config/db.config.ts
 
 # compiled output
 /dist

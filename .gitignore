@@ -1,5 +1,5 @@
 # config
-/src/config/account.config.ts
+/src/config/wexin_account.ts
 /src/config/db.config.ts
 
 # compiled output

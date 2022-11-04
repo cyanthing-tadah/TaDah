@@ -1,20 +1,13 @@
 import * as crypto from 'crypto'
 import { create } from 'xmlbuilder2'
 import { Injectable, Logger } from '@nestjs/common'
-import { AccountConfig } from '../../config/account.config'
+import { ConfigService } from '@nestjs/config'
 import { AccountService } from '../account/account.service'
 import type { ValidationInterfaces } from './wechat.interface'
 
 @Injectable()
 export class WechatService {
-  constructor(private readonly accountService: AccountService) {}
-
-  /**
-   * 返回微信公众号配置
-   */
-  loadWeixinConfig() {
-    return AccountConfig
-  }
+  constructor(private readonly accountService: AccountService, private configService: ConfigService) {}
 
   /**
    * 校验微信公众号对接合法性
@@ -24,7 +17,7 @@ export class WechatService {
     try {
       // 1.获取微信服务器Get请求的参数 signature、timestamp、nonce、echostr
       const { signature, timestamp, nonce, echostr } = validationData
-      const { token } = AccountConfig
+      const token = this.configService.get<string>('TOKEN')
 
       // 2.将token、timestamp、nonce三个参数进行字典序排序
       const array = [token, timestamp, nonce]

@@ -1,0 +1,25 @@
+name: Docker Image CI & CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: 构建镜像
+        run: docker build --file Dockerfile --tag jpccr.ccs.tencentyun.com/ta_dah/ta_dah .
+      - name: 登录 docker hub
+        run: echo "${{ secrets.TENCENT_REGISTRY_PASSWORD }}" | docker login jpccr.ccs.tencentyun.com --username=100010215712 --password-stdin
+      - name: 镜像推送
+        run: docker push jpccr.ccs.tencentyun.com/ta_dah/ta_dah

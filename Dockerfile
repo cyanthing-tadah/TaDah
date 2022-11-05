@@ -1,5 +1,6 @@
 FROM node:16.15.0 as build
 
+ARG NODE_ENV=prod
 ARG APP_ID={$APP_ID}
 ARG APP_SECRET={$APP_SECRET}
 ARG ENCODING_AES_KEY={$ENCODING_AES_KEY}
@@ -24,7 +25,9 @@ COPY tsconfig.json .
 COPY tsconfig.build.json .
 COPY src ./src
 
-RUN export NODE_ENV=prod
+RUN echo $APP_ID
+
+RUN export NODE_ENV=$NODE_ENV
 RUN export APP_ID=$APP_ID
 RUN export APP_SECRET=$APP_SECRET
 RUN export ENCODING_AES_KEY=$ENCODING_AES_KEY
@@ -35,8 +38,6 @@ RUN export MYSQL_PORT=$MYSQL_PORT
 RUN export MYSQL_USERNAME=$MYSQL_USERNAME
 RUN export ORIGIN_ID=$ORIGIN_ID
 RUN export TOKEN=$TOKEN
-
-RUN echo NODE_ENV
 
 RUN pnpm install
 RUN pnpm build

@@ -25,8 +25,6 @@ COPY tsconfig.json .
 COPY tsconfig.build.json .
 COPY src ./src
 
-RUN echo $APP_ID
-
 RUN export NODE_ENV=$NODE_ENV
 RUN export APP_ID=$APP_ID
 RUN export APP_SECRET=$APP_SECRET

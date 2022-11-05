@@ -15,16 +15,17 @@ jobs:
       - uses: actions/checkout@v3
       - name: 构建镜像
         run: docker build \
-          --build-arg "APP_ID=${{ secrets.APP_ID }}" \
-          --build-arg "APP_SECRET=${{ secrets.APP_SECRET }}" \
-          --build-arg "ENCODING_AES_KEY=${{ secrets.ENCODING_AES_KEY }}" \
-          --build-arg "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" \
-          --build-arg "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" \
-          --build-arg "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" \
-          --build-arg "MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}" \
-          --build-arg "ORIGIN_ID=${{ secrets.ORIGIN_ID }}" \
-          --build-arg "TOKEN=${{ secrets.TOKEN }}" \
-          --file Dockerfile --tag jpccr.ccs.tencentyun.com/ta_dah/ta_dah .
+               --build-arg "APP_ID=${{ secrets.APP_ID }}" \
+               --build-arg "APP_SECRET=${{ secrets.APP_SECRET }}" \
+               --build-arg "ENCODING_AES_KEY=${{ secrets.ENCODING_AES_KEY }}" \
+               --build-arg "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" \
+               --build-arg "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" \
+               --build-arg "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" \
+               --build-arg "MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}" \
+               --build-arg "ORIGIN_ID=${{ secrets.ORIGIN_ID }}" \
+               --build-arg "TOKEN=${{ secrets.TOKEN }}" \
+               --file Dockerfile \
+               --tag jpccr.ccs.tencentyun.com/ta_dah/ta_dah .
       - name: 登录 docker hub
         run: echo "${{ secrets.TENCENT_REGISTRY_PASSWORD }}" | docker login jpccr.ccs.tencentyun.com --username=100010215712 --password-stdin
       - name: 镜像推送

@@ -24,7 +24,7 @@ jobs:
           --build-arg "MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}" \
           --build-arg "ORIGIN_ID=${{ secrets.ORIGIN_ID }}" \
           --build-arg "TOKEN=${{ secrets.TOKEN }}" \
-          --file Dockerfile --tag jpccr.ccs.tencentyun.com/ta_dah/${GITHUB_REPO} .
+          --file Dockerfile --tag jpccr.ccs.tencentyun.com/ta_dah/ta_dah .
       - name: 登录 docker hub
         run: echo "${{ secrets.TENCENT_REGISTRY_PASSWORD }}" | docker login jpccr.ccs.tencentyun.com --username=100010215712 --password-stdin
       - name: 镜像推送

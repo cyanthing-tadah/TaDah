@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: 构建镜像
-        run: docker build --build-arg APP_ID=$APP_ID APP_SECRET=$APP_SECRET ENCODING_AES_KEY=$ENCODING_AES_KEY MYSQL_DATABASE_NAME=$MYSQL_DATABASE_NAME MYSQL_HOST=$MYSQL_HOST MYSQL_PASSWORD=$MYSQL_PASSWORD MYSQL_PORT=$MYSQL_PORT MYSQL_USERNAME=$MYSQL_USERNAME ORIGIN_ID=$ORIGIN_ID TOKEN=$TOKEN --file Dockerfile --tag jpccr.ccs.tencentyun.com/ta_dah/ta_dah .
+        run: docker build --file Dockerfile --tag jpccr.ccs.tencentyun.com/ta_dah/ta_dah .
       - name: 登录 docker hub
         run: echo "${{ secrets.TENCENT_REGISTRY_PASSWORD }}" | docker login jpccr.ccs.tencentyun.com --username=100010215712 --password-stdin
       - name: 镜像推送

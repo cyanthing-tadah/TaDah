@@ -1,7 +1,3 @@
-# config
-/src/config/wexin_account.ts
-/src/config/db.config.ts
-
 # compiled output
 /dist
 /node_modules

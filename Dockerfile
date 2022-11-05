@@ -13,7 +13,7 @@ COPY tsconfig.json .
 COPY tsconfig.build.json .
 COPY src ./src
 
-RUN export NODE_ENV=local
+RUN export NODE_ENV=prod
 
 RUN pnpm install
 RUN pnpm build

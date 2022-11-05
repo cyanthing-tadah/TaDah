@@ -36,10 +36,6 @@ RUN export MYSQL_USERNAME=$MYSQL_USERNAME
 RUN export ORIGIN_ID=$ORIGIN_ID
 RUN export TOKEN=$TOKEN
 
-RUN echo $APP_ID
-RUN echo $APP_SECRET
-RUN echo $ENCODING_AES_KEY
-
 RUN pnpm install
 RUN pnpm build
 

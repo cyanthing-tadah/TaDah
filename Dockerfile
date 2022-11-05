@@ -36,6 +36,8 @@ RUN export MYSQL_USERNAME=$MYSQL_USERNAME
 RUN export ORIGIN_ID=$ORIGIN_ID
 RUN export TOKEN=$TOKEN
 
+RUN echo NODE_ENV
+
 RUN pnpm install
 RUN pnpm build
 

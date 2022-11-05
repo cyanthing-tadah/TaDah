@@ -18,8 +18,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: 构建镜像
-        run: docker build --file Dockerfile --tag jpccr.ccs.tencentyun.com/ta_dah/TaDah .
+        run: docker build --file Dockerfile --tag jpccr.ccs.tencentyun.com/ta_dah/ta_dah .
       - name: 登录 docker hub
         run: echo "${{ secrets.TENCENT_REGISTRY_PASSWORD }}" | docker login jpccr.ccs.tencentyun.com --username=100010215712 --password-stdin
       - name: 镜像推送
-        run: docker push jpccr.ccs.tencentyun.com/ta_dah/TaDah
+        run: docker push jpccr.ccs.tencentyun.com/ta_dah/ta_dah

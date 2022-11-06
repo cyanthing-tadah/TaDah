@@ -10,7 +10,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "start": "nest start",
-    "start:dev": "cross-env NODE_ENV=local APPID=wx650b1d8df30aaf1d ORIGIN_ID=gh_5a94c4255bca APP_SECRET=3a2d700e65bc2145ea0e1bd57135b875 TOKEN=TaDahProd ENCODING_AES_KEY=YZ6pR2sWx2aXUgpNPodFK5YlEa1Ht9GssM53LLiPLeN nest start --watch",
+    "start:dev": "cross-env NODE_ENV=local APPID=wx880f0c9657e93d99 ORIGIN_ID=gh_70c8f062a13f APP_SECRET=7001e0457968e9c980a6959b32d21360 TOKEN=TaDahLocal ENCODING_AES_KEY=VqTFcjILqlGb607OULzTHGnVZtpCtcfLZVSDUXcPK86 nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"

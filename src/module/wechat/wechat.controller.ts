@@ -19,7 +19,7 @@ export class WechatController {
   async validation(@WechatValidationOptions() data: ValidationInterfaces) {
     const validationStr = await this.wechatService.checkSignature(data)
 
-    Logger.log(validationStr, '=========validationStr=========')
+    Logger.log(validationStr, 'validationStr')
 
     return validationStr
   }

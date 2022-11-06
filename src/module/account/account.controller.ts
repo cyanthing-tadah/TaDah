@@ -1,4 +1,4 @@
-import { BadRequestException, Controller, Get, UseFilters, UseInterceptors } from '@nestjs/common'
+import { BadRequestException, Controller, Get, Logger, UseFilters, UseInterceptors } from '@nestjs/common'
 import { HttpExceptionFilter } from '../../core/filters/http-exception.filter'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
 
@@ -6,8 +6,11 @@ import { TransformResponseInterceptor } from '../../core/interceptors/transform-
 @UseInterceptors(TransformResponseInterceptor)
 @UseFilters(HttpExceptionFilter)
 export class AccountController {
+  private readonly logger = new Logger(AccountController.name)
+
   @Get('/success')
   testSuccess() {
+    this.logger.log('success')
     return 'success'
   }
 

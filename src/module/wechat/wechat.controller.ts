@@ -14,12 +14,13 @@ interface XML {
 @Controller()
 export class WechatController {
   constructor(private readonly wechatService: WechatService) {}
+  private readonly logger = new Logger(WechatController.name)
 
   @Get()
   async validation(@WechatValidationOptions() data: ValidationInterfaces) {
     const validationStr = await this.wechatService.checkSignature(data)
 
-    Logger.log(validationStr, 'validationStr')
+    this.logger.log(validationStr, 'validationStr')
 
     return validationStr
   }

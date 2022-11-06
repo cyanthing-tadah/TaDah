@@ -19,3 +19,10 @@ jobs:
         run: echo "${{ secrets.TENCENT_REGISTRY_PASSWORD }}" | docker login jpccr.ccs.tencentyun.com --username=100010215712 --password-stdin
       - name: 镜像推送
         run: docker push jpccr.ccs.tencentyun.com/ta_dah/ta_dah
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 初始化ssh并执行sh启动镜像
+        run: ssh ubuntu@${{secrets.SERVER_IP}} "${{secrets.SERVE_PASSWORD}} && cd /home/deploy && sh deploy.sh"
+    needs: build

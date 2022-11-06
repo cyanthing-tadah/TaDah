@@ -1,6 +1,6 @@
 #/bin/bash
-docker stop 镜像名称
-docker rm 镜像名称
-docker rmi ccr.ccs.tencentyun.com/命名空间/镜像名称
-docker pull ccr.ccs.tencentyun.com/命名空间/镜像名称
-docker run -d --name 镜像名称 -p 7001:7001 ccr.ccs.tencentyun.com/命名空间/镜像名称
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+docker rmi jpccr.ccs.tencentyun.com/ta_dah/ta_dah
+docker pull jpccr.ccs.tencentyun.com/ta_dah/ta_dah
+docker run -d --name 镜像名称 -p 80:3000 jpccr.ccs.tencentyun.com/ta_dah/ta_dah

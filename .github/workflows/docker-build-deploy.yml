@@ -24,5 +24,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 初始化ssh并执行sh启动镜像
-        run: ssh ubuntu@${{secrets.SERVER_IP}} "${{secrets.SERVE_PASSWORD}} && cd /home/deploy && sh deploy.sh"
+        run: |
+          eval $(ssh-agent -s)
+          echo "${{secrets.SERVER_SSH_PRIV_KEY}}" > deploy.key
+          mkdir -p ~/.ssh
+          chmod 0600 deploy.key
+          ssh-add deploy.key
+          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+          ssh root@${{secrets.SERVER_IP}} "cd /home/deploy && sh deploy.sh"
     needs: build

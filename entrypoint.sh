@@ -13,4 +13,4 @@ export ORIGIN_ID=$ORIGIN_ID
 export TOKEN=$TOKEN
 
 echo "-------------master server ------------------"
-node /app/dist/main.js
+#node /app/dist/main.js

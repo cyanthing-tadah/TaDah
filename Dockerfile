@@ -20,6 +20,7 @@ RUN echo 'Asia/Shanghai' >/etc/timezone
 RUN npm i -g pnpm
 
 COPY package.json .
+COPY nest-cli.json .
 COPY pnpm-lock.yaml .
 COPY tsconfig.json .
 COPY tsconfig.build.json .

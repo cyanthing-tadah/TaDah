@@ -11,3 +11,20 @@ export interface ValidationInterfaces {
   /* 随机字符串 */
   echostr: string
 }
+
+export interface XMLData {
+  /* 消息接收方 ID */
+  ToUserName: string
+
+  /* 消息发送方 ID */
+  FromUserName: string
+
+  /* 消息发送时间 */
+  CreateTime: number
+
+  /* 消息类型 */
+  MsgType: 'event'
+
+  /* 事件类型 */
+  Event: 'subscribe' | 'unsubscribe'
+}

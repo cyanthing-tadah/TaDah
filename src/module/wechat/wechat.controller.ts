@@ -1,15 +1,7 @@
 import { Body, Controller, Get, HttpCode, Logger, Post } from '@nestjs/common'
 import { WechatValidationOptions } from '../../core/decorators/wechat-validation-options.decorator'
-import type { ValidationInterfaces } from './wechat.interface'
+import type { ValidationInterfaces, XMLData } from './wechat.interface'
 import { WechatService } from './wechat.service'
-
-interface XML {
-  ToUserName: string
-  FromUserName: string
-  CreateTime: number
-  MsgType: 'event'
-  Event: 'subscribe' | 'unsubscribe'
-}
 
 @Controller()
 export class WechatController {
@@ -27,7 +19,7 @@ export class WechatController {
 
   @Post()
   @HttpCode(200)
-  async handleReceiveMsg(@Body('xml') xml: XML) {
+  async handleReceiveMsg(@Body('xml') xml: XMLData) {
     return await this.wechatService.handleReceiveMsg(xml)
   }
 }

@@ -20,7 +20,6 @@ RUN echo 'Asia/Shanghai' >/etc/timezone
 RUN npm i -g pnpm
 
 COPY package.json .
-COPY public .
 COPY pnpm-lock.yaml .
 COPY tsconfig.json .
 COPY tsconfig.build.json .

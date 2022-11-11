@@ -54,7 +54,7 @@ export class WechatService {
         FromUserName: xml.ToUserName,
         CreateTime: new Date().getTime(),
         MsgType: 'text',
-        Content: '《陈宝开心券》\n看到该券的陈鑫婷今天会开心，我给你买了几瓶酒，等你姨妈完了喝哦，还有别的水果啊什么的，周末真的病的很难受，神智不清的，对不起啦！',
+        Content: '你好',
       },
     }).end({ prettyPrint: true })
   }

@@ -14,7 +14,7 @@ const DB_CONFIG = process.env.NODE_ENV === 'prod' ? PROD_DB_CONFIG : LOCAL_DB_CO
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({ ...DB_CONFIG, synchronize: false, entities: [`${__dirname}/**/*.entity{.ts,.js}`] }),
-    ServeStaticModule.forRoot({ rootPath: join(__dirname, 'public') }),
+    ServeStaticModule.forRoot({ rootPath: join(__dirname, 'static') }),
     WechatModule,
     AccountModule,
   ],

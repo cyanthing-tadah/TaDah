@@ -1,4 +1,4 @@
-name: Docker Image CI & CD
+name: Image CI & CD
 
 on:
   push:
@@ -31,5 +31,5 @@ jobs:
           chmod 0600 deploy.key
           ssh-add deploy.key
           echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-          ssh ubuntu@${{secrets.SERVER_IP}} "cd /home/ubuntu && sh deploy.sh"
+          ssh ubuntu@${{secrets.SERVER_IP}} "cd /root && sh deploy.sh"
     needs: build

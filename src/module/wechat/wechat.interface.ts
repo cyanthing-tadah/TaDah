@@ -12,7 +12,7 @@ export interface ValidationInterfaces {
   echostr: string
 }
 
-export interface XMLData {
+export interface XMLBaseData {
   /* 消息接收方 ID */
   ToUserName: string
 
@@ -23,8 +23,18 @@ export interface XMLData {
   CreateTime: number
 
   /* 消息类型 */
-  MsgType: 'event'
+  MsgType: 'event' | 'text' | 'image' | 'voice' | 'video' | 'shortvideo' | 'location' | 'link'
+}
 
-  /* 事件类型 */
+export interface MessageXMLData extends XMLBaseData {
+  /* 消息ID */
+  MsgId: number
+
+  /* 文本消息内容 */
+  Content: string
+}
+
+export interface SubscribeXMLData extends XMLBaseData {
+  /* 订阅事件类型：关注 ｜ 取关 */
   Event: 'subscribe' | 'unsubscribe'
 }

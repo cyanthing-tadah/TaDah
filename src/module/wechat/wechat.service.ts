@@ -1,13 +1,13 @@
 import * as crypto from 'crypto'
-import { create } from 'xmlbuilder2'
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { AccountService } from '../account/account.service'
+import { MessageService } from '../message/message.service'
+import { MessageXMLData, SubscribeXMLData, XMLBaseData } from './wechat.interface'
 import type { ValidationInterfaces } from './wechat.interface'
 
 @Injectable()
 export class WechatService {
-  constructor(private readonly accountService: AccountService, private configService: ConfigService) {}
+  constructor(private readonly configService: ConfigService, private readonly messageService: MessageService) {}
 
   /**
    * 校验微信公众号对接合法性
@@ -45,17 +45,16 @@ export class WechatService {
    * 处理接收到的微信消息
    * @param xml
    */
-  async handleReceiveMsg(xml: any) {
-    await this.accountService.saveUserInfo({ openid: xml.FromUserName, headimgurl: '', nickname: xml.FromUserName })
+  async handleReceiveMsg(xml: XMLBaseData) {
+    const { MsgType } = xml
+    switch (MsgType) {
+      case 'text':
+        return this.messageService.handleWeChatTextMessage(xml as MessageXMLData)
 
-    return create({
-      xml: {
-        ToUserName: xml.FromUserName,
-        FromUserName: xml.ToUserName,
-        CreateTime: new Date().getTime(),
-        MsgType: 'text',
-        Content: '你好',
-      },
-    }).end({ prettyPrint: true })
+      case 'event':
+        return await this.messageService.handleWeChatSubscribeEvent(xml as SubscribeXMLData)
+      default:
+        return 'success'
+    }
   }
 }

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common'
-import { AccountModule } from '../account/account.module'
+import { MessageModule } from '../message/message.module'
 import { WechatController } from './wechat.controller'
 import { WechatService } from './wechat.service'
 
 @Module({
-  imports: [AccountModule],
+  imports: [MessageModule],
   controllers: [WechatController],
   providers: [WechatService],
 })

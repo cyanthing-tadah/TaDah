@@ -1,4 +1,12 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 import { WexinUserAccountEntity } from '../account/account.entity'
 
 @Entity('tally_amount_tag')
@@ -17,6 +25,9 @@ export class TallAmountTagEntity {
 
   @ManyToOne(() => WexinUserAccountEntity, weixinUser => weixinUser.tallyTag)
   weixinUser: WexinUserAccountEntity
+
+  @OneToMany(() => TallyDataListEntity, tallyList => tallyList.amountTag)
+  tallyList: TallyDataListEntity[]
 }
 
 @Entity('tally_data_list')
@@ -24,8 +35,7 @@ export class TallyDataListEntity {
   @PrimaryGeneratedColumn()
   id: number
 
-  @OneToOne(() => TallAmountTagEntity)
-  @JoinColumn()
+  @ManyToOne(() => TallAmountTagEntity, amountTag => amountTag.tallyList)
   amountTag: TallAmountTagEntity
 
   @Column()

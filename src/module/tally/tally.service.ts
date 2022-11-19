@@ -1,16 +1,22 @@
 import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
+import { Repository } from 'typeorm'
 import { handleReturnTextMessage } from '../../helper'
 import { MessageXMLData } from '../wechat/wechat.interface'
+import { TallyDataListEntity } from './tally.entity'
 
 @Injectable()
 export class TallyService {
+  constructor(@InjectRepository(TallyDataListEntity) private readonly tallyDataListEntity: Repository<TallyDataListEntity>) {}
+
   /**
    * 指令记账
    * @param xml
    */
   handleAddTally(xml: MessageXMLData) {
-    const { success, info } = this.computeTallyInfo(xml.Content)
+    const { success, info, amountCount, amountDesc, amountTag } = this.computeTallyInfo(xml.Content)
     if (success) {
+      this.saveOneTallyInfo(amountTag, amountDesc, amountCount)
       return ''
     }
     return handleReturnTextMessage(xml, info)
@@ -27,12 +33,12 @@ export class TallyService {
     let errorInfo: string
 
     if (infoList.length === 3) {
-      const [amountType, amountDesc] = infoList
+      const [amountTag, amountDesc] = infoList
       let [,,amountCount] = infoList
       amountCount = amountCount.endsWith('元') ? amountCount.substring(0, amountCount.length - 1) : amountCount
 
       if (/^\d+(\.\d{1,2})?$/.test(amountCount) && amountCount.length <= 12) {
-        return { success: true, info: '成功解析', amountType, amountDesc, amountCount }
+        return { success: true, info: '成功解析', amountTag, amountDesc, amountCount }
       }
 
       errorInfo = `记账金额有误：\n${amountCount}\n金额最多2位小数且不能超过亿元`
@@ -41,4 +47,14 @@ export class TallyService {
 
     return { success: false, info: errorInfo }
   }
+
+  /**
+   * 存储一笔记账信息
+   * @param amountTag
+   * @param amountCount
+   * @param amountDesc
+   */
+  // saveOneTallyInfo(amountTag: string, amountCount: string, amountDesc: string) {
+  //
+  // }
 }

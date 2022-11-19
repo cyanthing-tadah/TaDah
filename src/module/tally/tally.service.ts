@@ -54,7 +54,7 @@ export class TallyService {
    * @param amountCount
    * @param amountDesc
    */
-  // saveOneTallyInfo(amountTag: string, amountCount: string, amountDesc: string) {
-  //
-  // }
+  saveOneTallyInfo(amountTag: string, amountCount: string, amountDesc: string) {
+    console.log(amountTag, amountDesc, amountCount)
+  }
 }

@@ -13,4 +13,7 @@ export class WexinUserAccountEntity {
 
   @CreateDateColumn()
   updateTime: Date
+
+  @Column()
+  email: string
 }

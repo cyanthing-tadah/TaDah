@@ -49,7 +49,7 @@ export class WechatService {
     const { MsgType } = xml
     switch (MsgType) {
       case 'text':
-        return this.messageService.handleWeChatTextMessage(xml as MessageXMLData)
+        return await this.messageService.handleWeChatTextMessage(xml as MessageXMLData)
 
       case 'event':
         return await this.messageService.handleWeChatSubscribeEvent(xml as SubscribeXMLData)

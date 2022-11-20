@@ -25,7 +25,7 @@ export class MessageService {
 
     switch (type) {
       case ContentType.tally:
-        return this.tallyService.handleAddTally(xml)
+        return await this.tallyService.handleAddTally(xml)
       case ContentType.nothing:
       default:
         return handleReturnTextMessage(xml, 'TaDah不明白您的指令呢')

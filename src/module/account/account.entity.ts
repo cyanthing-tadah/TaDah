@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
-import { TallAmountTagEntity, TallyDataListEntity } from '../tally/tally.entity'
+import { TallAmountTagEntity, TallyMonthDataEntity } from '../tally/tally.entity'
 
 @Entity('weixin_user_account')
 export class WexinUserAccountEntity {
@@ -18,8 +18,8 @@ export class WexinUserAccountEntity {
   @Column()
   email: string
 
-  @OneToMany(() => TallyDataListEntity, tallyData => tallyData.weixinUser)
-  tallyData: TallyDataListEntity[]
+  @OneToMany(() => TallyMonthDataEntity, tallyData => tallyData.weixinUser)
+  monthData: TallyMonthDataEntity[]
 
   @OneToMany(() => TallAmountTagEntity, tallyData => tallyData.weixinUser)
   tallyTag: TallAmountTagEntity[]

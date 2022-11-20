@@ -30,6 +30,33 @@ export class TallAmountTagEntity {
   tallyList: TallyDataListEntity[]
 }
 
+@Entity('tally_month_data')
+export class TallyMonthDataEntity {
+  @PrimaryGeneratedColumn()
+  id: number
+
+  @Column()
+  month: number
+
+  @Column()
+  year: number
+
+  @Column({ default: null })
+  target: number
+
+  @Column({ default: null })
+  income: number
+
+  @Column()
+  current: number
+
+  @OneToMany(() => TallyDataListEntity, tallyList => tallyList.monthData)
+  tallyList: TallyDataListEntity[]
+
+  @ManyToOne(() => WexinUserAccountEntity, weixinUser => weixinUser.monthData)
+  weixinUser: WexinUserAccountEntity
+}
+
 @Entity('tally_data_list')
 export class TallyDataListEntity {
   @PrimaryGeneratedColumn()
@@ -41,6 +68,9 @@ export class TallyDataListEntity {
   @Column()
   count: number
 
+  @Column()
+  amountType: 0 | 1
+
   @Column({ type: 'text' })
   description: string
 
@@ -50,6 +80,6 @@ export class TallyDataListEntity {
   @UpdateDateColumn()
   updateTime: Date
 
-  @ManyToOne(() => WexinUserAccountEntity, weixinUser => weixinUser.tallyData)
-  weixinUser: WexinUserAccountEntity
+  @ManyToOne(() => TallyMonthDataEntity, monthData => monthData.tallyList)
+  monthData: TallyMonthDataEntity
 }

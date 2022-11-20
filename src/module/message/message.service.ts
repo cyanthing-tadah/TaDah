@@ -7,6 +7,7 @@ import { subscribeMessage } from '../../helper/backMessage.template'
 
 enum ContentType {
   tally = 'tally',
+  monthTarget = 'monthTarget',
   nothing = 'nothing',
   translate = 'translate',
 }
@@ -26,6 +27,8 @@ export class MessageService {
     switch (type) {
       case ContentType.tally:
         return await this.tallyService.handleAddTally(xml)
+      case ContentType.monthTarget:
+        return await this.tallyService.handleMonthTarget(xml)
       case ContentType.nothing:
       default:
         return handleReturnTextMessage(xml, 'TaDah不明白您的指令呢')
@@ -56,6 +59,9 @@ export class MessageService {
   private computeTypeOfContent(content: string): ContentType {
     if (content.startsWith('记账')) {
       return ContentType.tally
+    }
+    if (content.startsWith('账单')) {
+      return ContentType.monthTarget
     }
     if (content.startsWith('翻译')) {
       return ContentType.translate

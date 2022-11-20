@@ -13,6 +13,7 @@ enum AmountType {
 }
 
 const exampleText = '\n举个🌰：记账 咖啡 斯达巴克的焦糖玛奇朵 消费39.9元'
+const exampleMonthDataText = '\n举个🌰：账单 本月收入100000元 本月消费目标50000元'
 const paidTypes = ['花费', '消费', '减少', '支出']
 const incomeTypes = ['收入', '收到', '增加']
 
@@ -103,11 +104,89 @@ export class TallyService {
     }
 
     if (!monthData.income || !monthData.target) {
-      warningInfo += '\n👨🏻‍💻本月您还没有设定收入、目标支出数值，您可以发送指令：账单 本月收入xx元 本月目标xx元'
+      warningInfo += `\n🕵🏻本月您还没有设定收入、目标支出数值，您可以进入应用设置或发送指令${exampleMonthDataText}`
     }
 
     const recordEntity = this.tallyDataListEntity.create({ count: parseFloat(count) * 100, description, amountTag, monthData, amountType })
     const result = await this.tallyDataListEntity.save(recordEntity)
     return { result, warningInfo }
+  }
+
+  /**
+   * 更新or增设当月收入与目标
+   * @param xml
+   */
+  async handleMonthTarget(xml: MessageXMLData) {
+    const { success, info, record } = this.computeMonthTargetData(xml.Content)
+    if (success) {
+      await this.saveMonthData(record, xml)
+      return ''
+    }
+    return handleReturnTextMessage(xml, info)
+  }
+
+  /**
+   * 处理出月度计划指令的关键信息
+   * @private
+   * @param content
+   */
+  private computeMonthTargetData(content: string) {
+    const result = content.slice(2).trim()
+    const infoList = result.split(' ')
+    let errorInfo = ''
+    if (infoList.length === 2) {
+      let incomeCount: string
+      let targetCount: string
+      infoList.forEach((item) => {
+        if (item.includes('收入')) {
+          incomeCount = item
+        }
+        if (item.includes('目标')) {
+          targetCount = item
+        }
+      })
+
+      if (incomeCount && targetCount) {
+        incomeCount = incomeCount.match(/\d+(\.\d{1,2})?/)[0]
+        targetCount = targetCount.match(/\d+(\.\d{1,2})?/)[0]
+        if (incomeCount && targetCount && incomeCount.length <= 12 && targetCount.length <= 12) {
+          const incomeCountRes = parseFloat(incomeCount)
+          const targetCountRes = parseFloat(targetCount)
+          if (incomeCountRes >= targetCountRes) {
+            return { success: true, record: { incomeCount: incomeCountRes, targetCount: targetCountRes } }
+          }
+
+          errorInfo = `收入与支出目标关系不对\n收入${incomeCountRes}元不能低于消费目标${targetCountRes}元`
+          return { success: false, info: errorInfo }
+        }
+        errorInfo = `收入与支出目标有误，无法识别出具体数额，或数额太大辣！请自行检查${exampleMonthDataText}`
+        return { success: false, info: errorInfo }
+      }
+      errorInfo = `此段指令格式有误：\n${result}\n无法解析本月收入、本月消费目标，保证收入与消费目标文字编写明确${exampleMonthDataText}`
+      return { success: false, info: errorInfo }
+    }
+
+    errorInfo = `此段指令格式有误：\n${result}\n无法解析出有效信息（本月收入、本月目标），保证彼此之间用空格分割${exampleMonthDataText}`
+    return { success: false, info: errorInfo }
+  }
+
+  /**
+   * 存储or更新月度数据
+   * @param record
+   * @param xml
+   */
+  async saveMonthData(record: { incomeCount: number; targetCount: number }, xml: MessageXMLData) {
+    const { incomeCount: income, targetCount: target } = record
+    const year = dayjs(xml.CreateTime * 1000).year()
+    const month = dayjs(xml.CreateTime * 1000).month() + 1
+    const monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid: xml.FromUserName } })
+    // TODO 设定后，需要查询历史账单进行一次演算，算出current
+    if (!monthData) {
+      const monthDataEntity = await this.tallyMonthDataEntity.create({ year, month, income, target, weixinUser: { openid: xml.FromUserName } })
+      await this.tallyMonthDataEntity.save(monthDataEntity)
+    }
+    else {
+      await this.tallyMonthDataEntity.update(monthData.id, { year, month, income, target, weixinUser: { openid: xml.FromUserName } })
+    }
   }
 }

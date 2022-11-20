@@ -47,7 +47,8 @@ export class TallyMonthDataEntity {
   @Column({ default: null })
   income: number
 
-  @Column()
+  // TODO 没有当月数据的时候，提示设定目标值
+  @Column({ default: null })
   current: number
 
   @OneToMany(() => TallyDataListEntity, tallyList => tallyList.monthData)

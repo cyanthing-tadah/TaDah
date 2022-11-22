@@ -6,7 +6,7 @@ import * as bodyParserXml from 'body-parser-xml'
 bodyParserXml(bodyParser)
 
 /**
- * 处理微信发来的 XML 格式信息为JSON格式
+ * wechat message XML => object
  */
 @Injectable()
 export class WechatXmlMiddleware implements NestMiddleware {

@@ -80,6 +80,9 @@ export class TallyDataListEntity {
   @UpdateDateColumn()
   updateTime: Date
 
+  @Column({ default: false })
+  delete: boolean
+
   @ManyToOne(() => TallyMonthDataEntity, monthData => monthData.tallyList)
   monthData: TallyMonthDataEntity
 }

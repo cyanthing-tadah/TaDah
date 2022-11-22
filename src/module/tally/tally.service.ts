@@ -180,6 +180,8 @@ export class TallyService {
     const year = dayjs(xml.CreateTime * 1000).year()
     const month = dayjs(xml.CreateTime * 1000).month() + 1
     const monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid: xml.FromUserName } })
+    const tallyList = await this.tallyDataListEntity.findAndCount({ monthData: { id: monthData.id } })
+    console.log(tallyList)
     // TODO 设定后，需要查询历史账单进行一次演算，算出current
     if (!monthData) {
       const monthDataEntity = await this.tallyMonthDataEntity.create({ year, month, income, target, weixinUser: { openid: xml.FromUserName } })

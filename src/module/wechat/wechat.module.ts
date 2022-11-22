@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common'
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common'
+import { WechatXmlMiddleware } from '../../core/middlewares/wechat-xml.middleware'
 import { MessageModule } from '../message/message.module'
 import { WechatController } from './wechat.controller'
 import { WechatService } from './wechat.service'
@@ -8,4 +9,8 @@ import { WechatService } from './wechat.service'
   controllers: [WechatController],
   providers: [WechatService],
 })
-export class WechatModule {}
+export class WechatModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(WechatXmlMiddleware).forRoutes(WechatController)
+  }
+}

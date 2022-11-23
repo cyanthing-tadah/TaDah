@@ -47,9 +47,6 @@ export class TallyMonthDataEntity {
   @Column({ default: null })
   income: number
 
-  @Column({ default: null })
-  current: number
-
   @OneToMany(() => TallyDataListEntity, tallyList => tallyList.monthData)
   tallyList: TallyDataListEntity[]
 

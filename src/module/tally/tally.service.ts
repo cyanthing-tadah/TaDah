@@ -180,15 +180,39 @@ export class TallyService {
     const year = dayjs(xml.CreateTime * 1000).year()
     const month = dayjs(xml.CreateTime * 1000).month() + 1
     const monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid: xml.FromUserName } })
-    const tallyList = await this.tallyDataListEntity.findAndCount({ monthData: { id: monthData.id } })
-    console.log(tallyList)
-    // TODO 设定后，需要查询历史账单进行一次演算，算出current
     if (!monthData) {
-      const monthDataEntity = await this.tallyMonthDataEntity.create({ year, month, income, target, weixinUser: { openid: xml.FromUserName } })
-      await this.tallyMonthDataEntity.save(monthDataEntity)
+      const newEntity = await this.tallyMonthDataEntity.create({ year, month, income, target, weixinUser: { openid: xml.FromUserName } })
+      await this.tallyMonthDataEntity.save(newEntity)
+      await this.computeCurrentCount(newEntity)
     }
     else {
       await this.tallyMonthDataEntity.update(monthData.id, { year, month, income, target, weixinUser: { openid: xml.FromUserName } })
+      await this.computeCurrentCount(monthData)
     }
+  }
+
+  /**
+   * 计算工资剩余和目标支出剩余
+   * @param monthData
+   */
+  async computeCurrentCount(monthData: TallyMonthDataEntity) {
+    const { id, target, income } = monthData
+    const tallyDataListQueryBuilder = this.tallyDataListEntity.createQueryBuilder('tallyData')
+    tallyDataListQueryBuilder
+      .where('tallyData.delete=false')
+      .where('monthDataId=:id', { id })
+      .orderBy('tallyData.createTime', 'DESC')
+      .select(['tallyData.count', 'tallyData.amountType'])
+    const list = await tallyDataListQueryBuilder.getMany()
+    let vector = 0
+    list.forEach((item) => {
+      if (item.amountType === 0) {
+        vector -= item.count
+      }
+      else {
+        vector += item.count
+      }
+    })
+    return { currentSalary: income + vector, residueTarget: target + vector }
   }
 }

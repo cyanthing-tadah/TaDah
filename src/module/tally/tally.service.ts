@@ -33,9 +33,9 @@ export class TallyService {
   async handleAddTally(xml: MessageXMLData) {
     const { success, info, record } = this.computeTallyInfo(xml.Content)
     if (success) {
-      const { result, warningInfo } = await this.saveOneTallyInfo(record, xml)
+      const { result, warningInfo, resultText } = await this.saveOneTallyInfo(record, xml)
       const dateStr = dayjs(result.createTime).format('YYYY年MM月 HH:mm')
-      const backMessage = `🎉 Ta Dah! 记账成功：\n${dateStr}时您${result.amountType === AmountType.paid ? '消费' : '收入'}${(result.count / 100).toFixed(2)}元${warningInfo}`
+      const backMessage = `🎉 Ta Dah! 记账成功：\n${dateStr}时您${result.amountType === AmountType.paid ? '消费' : '收入'}${(result.count / 100).toFixed(2)}元${warningInfo}\n${resultText}`
       return handleReturnTextMessage(xml, backMessage)
     }
     return handleReturnTextMessage(xml, info)
@@ -109,7 +109,8 @@ export class TallyService {
 
     const recordEntity = this.tallyDataListEntity.create({ count: parseFloat(count) * 100, description, amountTag, monthData, amountType })
     const result = await this.tallyDataListEntity.save(recordEntity)
-    return { result, warningInfo }
+    const { residueTarget, currentSalary } = await this.computeCurrentCount(monthData)
+    return { result, warningInfo, resultText: `目前您的本月工资余额为${(currentSalary / 100).toFixed(2)}元\n目前您的目标开支余额为${(residueTarget / 100).toFixed(2)}元` }
   }
 
   /**
@@ -180,13 +181,16 @@ export class TallyService {
     const year = dayjs(xml.CreateTime * 1000).year()
     const month = dayjs(xml.CreateTime * 1000).month() + 1
     let monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid: xml.FromUserName } })
-    let resultText = ' 创建本月收入与消费目标成功\n🧾 基于您的本月已累计账单：\n'
+    let resultText = '本月收入与消费目标成功\n🧾 基于您的本月已累计账单：\n'
     if (!monthData) {
       monthData = await this.tallyMonthDataEntity.create({ year, month, income, target, weixinUser: { openid: xml.FromUserName } })
-      resultText = `🎉${resultText}`
+      resultText = `🎉 创建${resultText}`
     }
     else {
-      resultText = `✍️${resultText}`
+      await this.tallyMonthDataEntity.update(monthData.id, { year, month, income, target, weixinUser: { openid: xml.FromUserName } })
+      monthData.income = income
+      monthData.target = target
+      resultText = `✍️ 更新${resultText}`
     }
     await this.tallyMonthDataEntity.save(monthData)
     const { currentSalary, residueTarget } = await this.computeCurrentCount(monthData)
@@ -206,6 +210,7 @@ export class TallyService {
       .orderBy('tallyData.createTime', 'DESC')
       .select(['tallyData.count', 'tallyData.amountType'])
     const list = await tallyDataListQueryBuilder.getMany()
+
     let vector = 0
     list.forEach((item) => {
       if (item.amountType === 0) {

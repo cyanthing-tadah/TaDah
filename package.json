@@ -29,6 +29,7 @@
     "cross-env": "^7.0.3",
     "crypto": "^1.0.1",
     "dayjs": "^1.11.6",
+    "ioredis": "^5.2.4",
     "mysql": "^2.18.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

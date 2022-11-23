@@ -50,7 +50,6 @@ export class WechatService {
     switch (MsgType) {
       case 'text':
         return await this.messageService.handleWeChatTextMessage(xml as MessageXMLData)
-
       case 'event':
         return await this.messageService.handleWeChatSubscribeEvent(xml as SubscribeXMLData)
       default:

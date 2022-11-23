@@ -202,7 +202,7 @@ export class TallyService {
    * @param monthData
    */
   async computeCurrentCount(monthData: TallyMonthDataEntity) {
-    const { id, target, income } = monthData
+    const { id, target = 0, income = 0 } = monthData
     const tallyDataListQueryBuilder = this.tallyDataListEntity.createQueryBuilder('tallyData')
     tallyDataListQueryBuilder
       .where('tallyData.delete=false')
@@ -221,5 +221,20 @@ export class TallyService {
       }
     })
     return { currentSalary: income * 100 + vector, residueTarget: target * 100 + vector }
+  }
+
+  /**
+   * 查询消费状况
+   * @param xml
+   */
+  async handleFindMonthData(xml: MessageXMLData) {
+    const year = dayjs(xml.CreateTime * 1000).year()
+    const month = dayjs(xml.CreateTime * 1000).month() + 1
+    const monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid: xml.FromUserName } })
+    const { currentSalary, residueTarget } = await this.computeCurrentCount(monthData)
+    if (monthData.income && monthData.target) {
+      return handleReturnTextMessage(xml, `🧐 嗯！经过一番查找，您目前的消费：\n月工资余额${(currentSalary / 100).toFixed(2)}元\n月目标开支余额${(residueTarget / 100).toFixed(2)}元`)
+    }
+    return handleReturnTextMessage(xml, `💁🏻 哦！您本月还没有设置收入与目标开支呢\n您目前的消费：\n${(currentSalary / 100).toFixed(2)}元`)
   }
 }

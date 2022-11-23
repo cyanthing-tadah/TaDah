@@ -8,6 +8,7 @@ import { subscribeMessage } from '../../helper/backMessage.template'
 enum ContentType {
   tally = 'tally',
   monthTarget = 'monthTarget',
+  findMonthTarget = 'findMonthTarget',
   nothing = 'nothing',
   translate = 'translate',
 }
@@ -29,6 +30,8 @@ export class MessageService {
         return await this.tallyService.handleAddTally(xml)
       case ContentType.monthTarget:
         return await this.tallyService.handleMonthTarget(xml)
+      case ContentType.findMonthTarget:
+        return await this.tallyService.handleFindMonthData(xml)
       case ContentType.nothing:
       default:
         return handleReturnTextMessage(xml, 'TaDah不明白您的指令呢')
@@ -62,6 +65,9 @@ export class MessageService {
     }
     if (content.startsWith('账单')) {
       return ContentType.monthTarget
+    }
+    if (content.startsWith('本月账单剩余')) {
+      return ContentType.findMonthTarget
     }
     if (content.startsWith('翻译')) {
       return ContentType.translate

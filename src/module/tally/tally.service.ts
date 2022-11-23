@@ -119,8 +119,8 @@ export class TallyService {
   async handleMonthTarget(xml: MessageXMLData) {
     const { success, info, record } = this.computeMonthTargetData(xml.Content)
     if (success) {
-      await this.saveMonthData(record, xml)
-      return ''
+      const result = await this.saveMonthData(record, xml)
+      return handleReturnTextMessage(xml, result)
     }
     return handleReturnTextMessage(xml, info)
   }
@@ -179,16 +179,18 @@ export class TallyService {
     const { incomeCount: income, targetCount: target } = record
     const year = dayjs(xml.CreateTime * 1000).year()
     const month = dayjs(xml.CreateTime * 1000).month() + 1
-    const monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid: xml.FromUserName } })
+    let monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid: xml.FromUserName } })
+    let resultText = ' 创建本月收入与消费目标成功\n🧾 基于您的本月已累计账单：\n'
     if (!monthData) {
-      const newEntity = await this.tallyMonthDataEntity.create({ year, month, income, target, weixinUser: { openid: xml.FromUserName } })
-      await this.tallyMonthDataEntity.save(newEntity)
-      await this.computeCurrentCount(newEntity)
+      monthData = await this.tallyMonthDataEntity.create({ year, month, income, target, weixinUser: { openid: xml.FromUserName } })
+      resultText = `🎉${resultText}`
     }
     else {
-      await this.tallyMonthDataEntity.update(monthData.id, { year, month, income, target, weixinUser: { openid: xml.FromUserName } })
-      await this.computeCurrentCount(monthData)
+      resultText = `✍️${resultText}`
     }
+    await this.tallyMonthDataEntity.save(monthData)
+    const { currentSalary, residueTarget } = await this.computeCurrentCount(monthData)
+    return `${resultText}目前您的本月工资余额为${(currentSalary / 100).toFixed(2)}元\n目前您的目标开支余额为${(residueTarget / 100).toFixed(2)}元`
   }
 
   /**
@@ -213,6 +215,6 @@ export class TallyService {
         vector += item.count
       }
     })
-    return { currentSalary: income + vector, residueTarget: target + vector }
+    return { currentSalary: income * 100 + vector, residueTarget: target * 100 + vector }
   }
 }

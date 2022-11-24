@@ -1,4 +1,5 @@
 import * as crypto from 'crypto'
+import { HttpService } from '@nestjs/axios'
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { MessageService } from '../message/message.service'
@@ -8,7 +9,10 @@ import type { ValidationInterfaces } from './wechat.interface'
 
 @Injectable()
 export class WechatService {
+  private readonly logger = new Logger(WechatService.name)
+
   constructor(
+    private readonly httpService: HttpService,
     private readonly configService: ConfigService,
     private readonly messageService: MessageService,
     private readonly redisService: RedisService,
@@ -62,7 +66,17 @@ export class WechatService {
     }
   }
 
-  loadAccessToken() {
-
+  /**
+   * 加载微信凭证
+   */
+  async loadAccessToken() {
+    const APPID = this.configService.get<string>('APPID')
+    const APP_SECRET = this.configService.get<string>('APP_SECRET')
+    const res = await this.httpService.get<{ access_token: string; expires_in: number }>(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APP_SECRET}`)
+    res.subscribe({
+      error: err => this.logger.error(err, 'LOAD TOKEN ERROR'),
+      complete: () => this.logger.log('LOAD TOKEN SUCCESS'),
+      next: value => this.redisService.setValue('accessToken', value.data.access_token, value.data.expires_in),
+    })
   }
 }

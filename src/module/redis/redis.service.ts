@@ -28,6 +28,14 @@ export class RedisService implements OnModuleInit {
   }
 
   /**
+   * 获取指定的 key 的值
+   * @param key
+   */
+  async getValue(key: string) {
+    return this.redis.get(key)
+  }
+
+  /**
    * 清除指定缓存
    * @param key
    */

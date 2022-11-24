@@ -11,6 +11,7 @@ export MYSQL_PORT=$MYSQL_PORT
 export MYSQL_USERNAME=$MYSQL_USERNAME
 export ORIGIN_ID=$ORIGIN_ID
 export TOKEN=$TOKEN
+export SERVER_IP=$SERVER_IP
 
 echo "-------------master server ------------------"
 node /app/dist/main.js

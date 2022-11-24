@@ -11,9 +11,11 @@ export class RedisService implements OnModuleInit {
   private redis: Cluster | Redis
 
   onModuleInit() {
-    const host = this.configService.get<string>('NODE_ENV') === 'local' ? 'localhost' : this.configService.get<string>('SERVER_IP')
-    this.redis = new Redis({ host, port: 6379 } as RedisOptions)
-    this.logger.log('finish redis connect', 'Redis')
+    console.log(this.configService.get<string>('NODE_ENV'))
+    console.log(this.configService.get<string>('SERVER_IP'))
+    // const host = this.configService.get<string>('NODE_ENV') === 'local' ? 'localhost' : this.configService.get<string>('SERVER_IP')
+    // this.redis = new Redis({ host, port: 6379 } as RedisOptions)
+    // this.logger.log('finish redis connect', 'Redis')
   }
 
   /**

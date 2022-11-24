@@ -1,17 +1,14 @@
-import { ConfigService } from '@nestjs/config'
 import Redis from 'ioredis'
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import type { Cluster, RedisOptions } from 'ioredis'
 
 @Injectable()
 export class RedisService implements OnModuleInit {
-  constructor(private readonly configService: ConfigService) {}
-
   private readonly logger = new Logger(RedisService.name)
   private redis: Cluster | Redis
 
   onModuleInit() {
-    const host = this.configService.get<string>('NODE_ENV') === 'local' ? 'localhost' : this.configService.get<string>('SERVER_IP')
+    const host = process.env.NODE_ENV === 'prod' ? 'localhost' : process.env.SERVER_IP
     this.redis = new Redis({ host, port: 6379 } as RedisOptions)
     this.logger.log('finish redis connect', 'Redis')
   }

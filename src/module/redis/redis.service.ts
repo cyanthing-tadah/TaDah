@@ -8,8 +8,8 @@ export class RedisService implements OnModuleInit {
   private redis: Cluster | Redis
 
   onModuleInit() {
-    // const host = process.env.NODE_ENV === 'prod' ? 'localhost' : process.env.SERVER_IP
-    // this.redis = new Redis({ host, port: 6379 } as RedisOptions)
+    const host = process.env.NODE_ENV === 'prod' ? 'localhost' : process.env.SERVER_IP
+    this.redis = new Redis({ host, port: 6379 })
     this.logger.log('finish redis connect', 'Redis')
   }
 

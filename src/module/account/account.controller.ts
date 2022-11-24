@@ -10,7 +10,6 @@ export class AccountController {
 
   @Get('/success')
   testSuccess() {
-    console.log(process.env)
     this.logger.log('success')
     return 'success'
   }

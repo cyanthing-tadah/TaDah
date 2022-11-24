@@ -2,12 +2,17 @@ import * as crypto from 'crypto'
 import { Injectable, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { MessageService } from '../message/message.service'
+import { RedisService } from '../redis/redis.service'
 import { MessageXMLData, SubscribeXMLData, XMLBaseData } from './wechat.interface'
 import type { ValidationInterfaces } from './wechat.interface'
 
 @Injectable()
 export class WechatService {
-  constructor(private readonly configService: ConfigService, private readonly messageService: MessageService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly messageService: MessageService,
+    private readonly redisService: RedisService,
+  ) {}
 
   /**
    * 校验微信公众号对接合法性
@@ -55,5 +60,9 @@ export class WechatService {
       default:
         return 'success'
     }
+  }
+
+  loadAccessToken() {
+
   }
 }

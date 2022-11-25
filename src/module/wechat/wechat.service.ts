@@ -70,16 +70,13 @@ export class WechatService {
    * 加载微信凭证
    */
   async loadAccessToken() {
-    const { APPID, APP_SECRET } = process.env
-    const res = await this.httpService.get<{ access_token: string; expires_in: number }>(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APPID}&secret=${APP_SECRET}`)
+    const APP_ID = this.configService.get<string>('APP_ID')
+    const APP_SECRET = this.configService.get<string>('APP_SECRET')
+    const res = await this.httpService.get<{ access_token: string; expires_in: number }>(`https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${APP_ID}&secret=${APP_SECRET}`)
     res.subscribe({
       error: err => this.logger.error(err, 'load token error'),
       complete: () => this.logger.log('load token success'),
-      next: (value) => {
-        this.logger.log(value.data)
-        this.logger.log(APPID, APP_SECRET)
-        this.redisService.setValue('accessToken', value.data.access_token, value.data.expires_in)
-      },
+      next: value => this.redisService.setValue('accessToken', value.data.access_token, value.data.expires_in),
     })
   }
 }

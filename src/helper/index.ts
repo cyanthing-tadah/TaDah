@@ -1,3 +1,4 @@
+import { RedisOptions } from 'ioredis'
 import { create } from 'xmlbuilder2'
 import { XMLBaseData } from '../module/wechat/wechat.interface'
 
@@ -40,4 +41,21 @@ export const handleDBConfig = () => {
   }
 
   return process.env.NODE_ENV === 'prod' ? PROD_DB_CONFIG : LOCAL_DB_CONFIG
+}
+
+/**
+ * 处理加载 redis 的配置
+ */
+export const handleRedisConfig = (): RedisOptions => {
+  const LOCAL_REDIS_CONFIG = {
+    host: 'localhost',
+    port: 6379,
+  }
+  const PROD_REDIS_CONFIG = {
+    host: process.env.REDIS_HOST,
+    port: 6379,
+    password: process.env.REDIS_PASSWORD,
+  }
+
+  return process.env.NODE_ENV === 'prod' ? PROD_REDIS_CONFIG : LOCAL_REDIS_CONFIG
 }

@@ -12,6 +12,8 @@ export MYSQL_USERNAME=$MYSQL_USERNAME
 export ORIGIN_ID=$ORIGIN_ID
 export TOKEN=$TOKEN
 export SERVER_IP=$SERVER_IP
+export REDIS_HOST=$REDIS_HOST
+export REDIS_PASSWORD=$REDIS_PASSWORD
 
 echo "-------------master server ------------------"
 node /app/dist/main.js

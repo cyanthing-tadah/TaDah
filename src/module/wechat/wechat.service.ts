@@ -76,7 +76,10 @@ export class WechatService {
     res.subscribe({
       error: err => this.logger.error(err, 'load token error'),
       complete: () => this.logger.log('load token success'),
-      next: value => this.redisService.setValue('accessToken', value.data.access_token, value.data.expires_in),
+      next: (value) => {
+        console.log(value.data)
+        this.redisService.setValue('accessToken', value.data.access_token)
+      },
     })
   }
 }

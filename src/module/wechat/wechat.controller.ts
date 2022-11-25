@@ -31,7 +31,7 @@ export class WechatController {
   }
 
   @Get('/testToken')
-  async getAccessToken() {
+  getAccessToken() {
     return this.redisService.getValue('accessToken')
   }
 }

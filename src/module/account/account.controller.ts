@@ -1,6 +1,7 @@
 import { BadRequestException, Controller, Get, Logger, UseFilters, UseInterceptors } from '@nestjs/common'
 import { HttpExceptionFilter } from '../../core/filters/http-exception.filter'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
+import { handleRedisConfig } from '../../helper'
 
 @Controller('account')
 @UseInterceptors(TransformResponseInterceptor)
@@ -10,6 +11,7 @@ export class AccountController {
 
   @Get('/success')
   testSuccess() {
+    this.logger.log(handleRedisConfig())
     this.logger.log('success')
     return 'success'
   }

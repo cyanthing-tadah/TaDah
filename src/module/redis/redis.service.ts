@@ -19,12 +19,16 @@ export class RedisService implements OnModuleInit {
    * @param value
    * @param ex
    */
-  async setValue(key: string, value: string, ex?: number) {
+  setValue(key: string, value: string, ex?: number) {
     if (ex) {
-      await this.redis.set(key, value, 'EX', ex)
+      this.redis.set(key, value, 'EX', ex, () => {
+        this.logger.log(`set ${key} success`)
+      })
     }
     else {
-      await this.redis.set(key, value)
+      this.redis.set(key, value, () => {
+        this.logger.log(`set ${key} success`)
+      })
     }
   }
 
@@ -32,7 +36,7 @@ export class RedisService implements OnModuleInit {
    * 获取指定的 key 的值
    * @param key
    */
-  async getValue(key: string) {
+  getValue(key: string) {
     return this.redis.get(key)
   }
 

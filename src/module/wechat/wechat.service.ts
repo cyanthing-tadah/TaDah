@@ -79,4 +79,24 @@ export class WechatService {
       next: value => this.redisService.setValue('accessToken', value.data.access_token, value.data.expires_in),
     })
   }
+
+  /**
+   * 加载用户的 access token (网页授权)
+   * @param code
+   */
+  async handleLoadUserAccessToken(code: string) {
+    const APP_ID = this.configService.get<string>('APP_ID')
+    const SECRET = this.configService.get<string>('APP_SECRET')
+    const params = { appid: APP_ID, secret: SECRET, code, grant_type: 'authorization_code' }
+    const res = this.httpService.get('https://api.weixin.qq.com/sns/oauth2/access_token', { params })
+    res.subscribe({
+      error: (err) => {
+        this.logger.error('load user access token error')
+        this.logger.error(err)
+      },
+      next: (value) => {
+        console.log(value)
+      },
+    })
+  }
 }

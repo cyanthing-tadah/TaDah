@@ -1,12 +1,12 @@
-import { Body, Controller, Get, HttpCode, Logger, Post } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, Logger, Post, Query } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { WechatValidationOptions } from '../../core/decorators/wechat-validation-options.decorator'
-import { RedisService } from '../redis/redis.service'
 import type { ValidationInterfaces, XMLBaseData } from './wechat.interface'
 import { WechatService } from './wechat.service'
 
 @Controller()
 export class WechatController {
-  constructor(private readonly wechatService: WechatService, private readonly redisService: RedisService) {}
+  constructor(private readonly wechatService: WechatService, private readonly configService: ConfigService) {}
 
   private readonly logger = new Logger(WechatController.name)
 
@@ -25,14 +25,14 @@ export class WechatController {
     return await this.wechatService.handleReceiveMsg(xml)
   }
 
-  @Post('/testToken')
-  async loadAccessToken() {
-    return this.wechatService.loadAccessToken()
+  @Get('/appid')
+  backUserAppId() {
+    return this.configService.get<string>('APP_ID')
   }
 
-  @Get('/testToken')
-  getAccessToken() {
-    return this.redisService.getValue('accessToken')
+  @Post('/accessToken')
+  async handleAccessToken(@Query('code') code: string) {
+    return await this.wechatService.handleLoadUserAccessToken(code)
   }
 }
 

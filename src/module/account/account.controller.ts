@@ -1,21 +1,21 @@
-import { BadRequestException, Controller, Get, Logger, UseFilters, UseInterceptors } from '@nestjs/common'
+import { Controller, Get, Logger, Post, Query, UseFilters, UseInterceptors } from '@nestjs/common'
 import { HttpExceptionFilter } from '../../core/filters/http-exception.filter'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
+import { AccountService } from './account.service'
 
 @Controller('account')
 @UseInterceptors(TransformResponseInterceptor)
 @UseFilters(HttpExceptionFilter)
 export class AccountController {
+  constructor(private readonly accountService: AccountService) {}
+
   private readonly logger = new Logger(AccountController.name)
 
-  @Get('/success')
-  testSuccess() {
-    this.logger.log('success')
-    return 'success'
+  @Get('/checkRegistration')
+  async handleCheckUser(@Query('uid') openid: string) {
+    return await this.accountService.checkUserInfoRegistration(openid)
   }
 
-  @Get('/failed')
-  testFailed() {
-    throw new BadRequestException('请求错误')
-  }
+  @Post('/update')
+  handleUpdateAccount() {}
 }

@@ -17,11 +17,8 @@ export class AccountService {
     return this.wexinUserAccountEntity.save(entity)
   }
 
-  /**
-   * 获取用户信息
-   * @param openid
-   */
-  async loadUserInfo(openid: string) {
-    return await this.wexinUserAccountEntity.findOne(openid)
+  async checkUserInfoRegistration(openid: string) {
+    const userInfo = await this.wexinUserAccountEntity.findOne({ openid })
+    return userInfo.password != null
   }
 }

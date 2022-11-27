@@ -8,6 +8,7 @@ import { AccountModule } from './module/account/account.module'
 import { MessageModule } from './module/message/message.module'
 import { TallyModule } from './module/tally/tally.module'
 import { RedisModule } from './module/redis/redis.module'
+import { CosModule } from './module/cos/cos.module'
 import { handleDBConfig } from './helper'
 
 @Module({
@@ -20,6 +21,7 @@ import { handleDBConfig } from './helper'
     MessageModule,
     TallyModule,
     RedisModule,
+    CosModule,
   ],
   providers: [],
 })

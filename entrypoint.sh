@@ -14,6 +14,10 @@ export TOKEN=$TOKEN
 export SERVER_IP=$SERVER_IP
 export REDIS_HOST=$REDIS_HOST
 export REDIS_PASSWORD=$REDIS_PASSWORD
+export SECRET_ID=$SECRET_ID
+export SECRET_KEY=$SECRET_KEY
+export BUCKET=$BUCKET
+export REGION=$REGION
 
 echo "-------------master server ------------------"
 node /app/dist/main.js

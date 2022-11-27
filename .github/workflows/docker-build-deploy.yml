@@ -14,7 +14,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: build image
-        run: docker build --build-arg "APP_ID=${{ secrets.APP_ID }}" --build-arg "APP_SECRET=${{ secrets.APP_SECRET }}" --build-arg "ENCODING_AES_KEY=${{ secrets.ENCODING_AES_KEY }}" --build-arg "MYSQL_HOST=${{ secrets.MYSQL_HOST }}" --build-arg "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" --build-arg "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" --build-arg "MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}" --build-arg "ORIGIN_ID=${{ secrets.ORIGIN_ID }}" --build-arg "TOKEN=${{ secrets.TOKEN }}" --build-arg "MYSQL_DATABASE_NAME=${{ secrets.MYSQL_DATABASE_NAME }}" --build-arg "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" --build-arg "REDIS_HOST=${{ secrets.REDIS_HOST }}" --file Dockerfile --tag hkccr.ccs.tencentyun.com/cyanthing/ta_dah .
+        run: >
+          docker build
+          --build-arg "APP_ID=${{ secrets.APP_ID }}"
+          --build-arg "APP_SECRET=${{ secrets.APP_SECRET }}"
+          --build-arg "ENCODING_AES_KEY=${{ secrets.ENCODING_AES_KEY }}"
+          --build-arg "MYSQL_HOST=${{ secrets.MYSQL_HOST }}"
+          --build-arg "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}"
+          --build-arg "MYSQL_PORT=${{ secrets.MYSQL_PORT }}"
+          --build-arg "MYSQL_USERNAME=${{ secrets.MYSQL_USERNAME }}"
+          --build-arg "ORIGIN_ID=${{ secrets.ORIGIN_ID }}"
+          --build-arg "TOKEN=${{ secrets.TOKEN }}"
+          --build-arg "MYSQL_DATABASE_NAME=${{ secrets.MYSQL_DATABASE_NAME }}"
+          --build-arg "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}"
+          --build-arg "REDIS_HOST=${{ secrets.REDIS_HOST }}"
+          --build-arg "SECRET_ID=${{ secrets.SECRET_ID }}"
+          --build-arg "SECRET_KEY=${{ secrets.SECRET_KEY }}"
+          --build-arg "BUCKET=${{ secrets.BUCKET }}"
+          --build-arg "REGION=${{ secrets.REGION }}"
+          --file Dockerfile
+          --tag hkccr.ccs.tencentyun.com/cyanthing/ta_dah .
       - name: login tencent image hub
         run: echo "${{ secrets.TENCENT_REGISTRY_PASSWORD }}" | docker login hkccr.ccs.tencentyun.com --username=100010215712 --password-stdin
       - name: image push

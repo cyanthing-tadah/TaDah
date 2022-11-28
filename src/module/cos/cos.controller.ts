@@ -1,12 +1,10 @@
 import { FileInterceptor } from '@nestjs/platform-express'
-import { Controller, Post, UploadedFile, UseFilters, UseInterceptors } from '@nestjs/common'
-import { HttpExceptionFilter } from '../../core/filters/http-exception.filter'
+import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
 import { CosService } from './cos.service'
 
 @Controller('cos')
 @UseInterceptors(TransformResponseInterceptor)
-@UseFilters(HttpExceptionFilter)
 export class CosController {
   constructor(private readonly cosService: CosService) {}
 

@@ -1,11 +1,9 @@
-import { Controller, Get, Logger, Post, Query, UseFilters, UseInterceptors } from '@nestjs/common'
-import { HttpExceptionFilter } from '../../core/filters/http-exception.filter'
+import { BadRequestException, Controller, Get, Logger, Post, Query, UseInterceptors } from '@nestjs/common'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
 import { AccountService } from './account.service'
 
 @Controller('account')
 @UseInterceptors(TransformResponseInterceptor)
-@UseFilters(HttpExceptionFilter)
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
@@ -13,7 +11,10 @@ export class AccountController {
 
   @Get('/checkRegistration')
   async handleCheckUser(@Query('uid') openid: string) {
-    return await this.accountService.checkUserInfoRegistration(openid)
+    if (openid) {
+      return await this.accountService.checkUserInfoRegistration(openid)
+    }
+    throw new BadRequestException('openid 不存在')
   }
 
   @Post('/update')

@@ -14,6 +14,7 @@ export class AccountController {
     if (openid) {
       return await this.accountService.checkUserInfoRegistration(openid)
     }
+    this.logger.error('openid 不存在')
     throw new BadRequestException('openid 不存在')
   }
 

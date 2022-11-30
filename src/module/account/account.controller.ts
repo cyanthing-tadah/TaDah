@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Logger, Post, Query, UseInterceptors } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Get, Logger, Post, Put, Query, UseInterceptors } from '@nestjs/common'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
 import { WeixinAccountDto } from './account.dto'
 import { AccountService } from './account.service'
@@ -27,5 +27,10 @@ export class AccountController {
   async handleRegisterPasswordInfo(@Body() data: WeixinAccountDto) {
     const res = await this.accountService.handleRegisterPasswordInfo(data)
     return res.affected !== 0
+  }
+
+  @Put('/updatePassword')
+  async handleUpdatePassword() {
+    return ''
   }
 }

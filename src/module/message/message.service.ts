@@ -47,7 +47,7 @@ export class MessageService {
 
     switch (Event) {
       case 'subscribe':
-        await this.accountService.saveUserInfo({ openid: xml.FromUserName, headimgurl: '', nickname: xml.FromUserName, email: '', password: null })
+        await this.accountService.saveUserInfo({ openid: xml.FromUserName, headimgurl: '', nickname: '', email: '', password: null })
         return handleReturnTextMessage(xml, subscribeMessage)
       case 'unsubscribe':
       default:

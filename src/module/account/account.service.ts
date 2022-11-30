@@ -24,14 +24,26 @@ export class AccountService {
   async handleRegisterPasswordInfo(userInfo: WeixinAccountDto) {
     const entity = await this.wexinUserAccountEntity.findOne({ openid: userInfo.openid })
     if (!entity) {
-      throw new NotFoundException('未找到该uid用户')
+      throw new NotFoundException('未找到该UID用户')
     }
     const newEntity = await this.wexinUserAccountEntity.create({ ...entity, ...userInfo })
     return this.wexinUserAccountEntity.update(userInfo.openid, newEntity)
   }
 
+  /**
+   * 检查用户是否注册过应用
+   * @param openid
+   */
   async checkUserInfoRegistration(openid: string) {
     const userInfo = await this.wexinUserAccountEntity.findOne({ openid })
     return userInfo.password != null
+  }
+
+  /**
+   * openid 查询用户信息
+   * @param openid
+   */
+  async findByOpenid(openid: string) {
+    return this.wexinUserAccountEntity.findOne({ openid })
   }
 }

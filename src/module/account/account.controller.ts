@@ -19,8 +19,13 @@ export class AccountController {
     throw new BadRequestException('openid 不存在')
   }
 
+  /**
+   * 首次使用 H5 应用时需要注册密码、邮箱、用户名等信息
+   * @param data
+   */
   @Post('/registerPassword')
-  async handleUpdateAccount(@Body() data: WeixinAccountDto) {
-    return await this.accountService.updateUserInfo(data)
+  async handleRegisterPasswordInfo(@Body() data: WeixinAccountDto) {
+    const res = await this.accountService.handleRegisterPasswordInfo(data)
+    return res.affected !== 0
   }
 }

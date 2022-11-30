@@ -37,7 +37,6 @@ export class WexinUserAccountEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
-    console.log(this.password)
     this.password = this.password ? await bcrypt.hash(this.password, 12) : null
   }
 

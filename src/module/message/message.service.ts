@@ -45,8 +45,6 @@ export class MessageService {
   async handleWeChatSubscribeEvent(xml: SubscribeXMLData) {
     const { Event } = xml
 
-    console.log(Event)
-
     switch (Event) {
       case 'subscribe':
         await this.accountService.saveUserInfo({ openid: xml.FromUserName, headimgurl: '', nickname: xml.FromUserName, email: '', password: null })

@@ -17,12 +17,17 @@ export class AccountService {
     return this.wexinUserAccountEntity.save(entity)
   }
 
-  async updateUserInfo(userInfo: WeixinAccountDto) {
+  /**
+   * 首次使用 H5 应用时注册密码、邮箱、用户名等信息
+   * @param userInfo
+   */
+  async handleRegisterPasswordInfo(userInfo: WeixinAccountDto) {
     const entity = await this.wexinUserAccountEntity.findOne({ openid: userInfo.openid })
     if (!entity) {
       throw new NotFoundException('未找到该uid用户')
     }
-    return await this.wexinUserAccountEntity.update(userInfo.openid, { ...entity, ...userInfo })
+    const newEntity = await this.wexinUserAccountEntity.create({ ...entity, ...userInfo })
+    return this.wexinUserAccountEntity.update(userInfo.openid, newEntity)
   }
 
   async checkUserInfoRegistration(openid: string) {

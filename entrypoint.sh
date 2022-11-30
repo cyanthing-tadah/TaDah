@@ -18,6 +18,9 @@ export SECRET_ID=$SECRET_ID
 export SECRET_KEY=$SECRET_KEY
 export BUCKET=$BUCKET
 export REGION=$REGION
+export PRIVATEKEY=$PRIVATEKEY
+export SALT=$SALT
+
 
 echo "-------------master server ------------------"
 node /app/dist/main.js

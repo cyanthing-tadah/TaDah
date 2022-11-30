@@ -6,6 +6,10 @@ import { AuthService } from './auth.service'
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  /**
+   * 登录
+   * @param data
+   */
   @Post('login')
   async login(@Body() data: LoginDto) {
     return await this.authService.login(data)

@@ -1,3 +1,4 @@
+import * as process from 'process'
 import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 import { Exclude } from 'class-transformer'
 import * as bcrypt from 'bcrypt'
@@ -37,7 +38,7 @@ export class WexinUserAccountEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {
-    this.password = this.password ? await bcrypt.hash(this.password, 12) : null
+    this.password = this.password ? await bcrypt.hash(this.password, parseInt(process.env.SALT, 10)) : null
   }
 
   /**

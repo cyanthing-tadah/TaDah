@@ -32,6 +32,8 @@ jobs:
           --build-arg "SECRET_KEY=${{ secrets.SECRET_KEY }}"
           --build-arg "BUCKET=${{ secrets.BUCKET }}"
           --build-arg "REGION=${{ secrets.REGION }}"
+          --build-arg "SALT=${{ secrets.SALT }}"
+          --build-arg "PRIVATEKEY=${{ secrets.PRIVATEKEY }}"
           --file Dockerfile
           --tag hkccr.ccs.tencentyun.com/cyanthing/ta_dah .
       - name: login tencent image hub

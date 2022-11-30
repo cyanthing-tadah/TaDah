@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { WexinUserAccountEntity } from './account.entity'
@@ -23,9 +23,14 @@ export class AccountService {
    */
   async handleRegisterPasswordInfo(userInfo: WeixinAccountDto) {
     const entity = await this.wexinUserAccountEntity.findOne({ openid: userInfo.openid })
+
     if (!entity) {
       throw new NotFoundException('未找到该UID用户')
     }
+    if (entity.password) {
+      throw new UnauthorizedException('该用户已完成注册')
+    }
+
     const newEntity = await this.wexinUserAccountEntity.create({ ...entity, ...userInfo })
     return this.wexinUserAccountEntity.update(userInfo.openid, newEntity)
   }
@@ -35,8 +40,8 @@ export class AccountService {
    * @param openid
    */
   async checkUserInfoRegistration(openid: string) {
-    const userInfo = await this.wexinUserAccountEntity.findOne({ openid })
-    return userInfo.password != null
+    const entity = await this.wexinUserAccountEntity.findOne({ openid })
+    return Boolean(entity.password)
   }
 
   /**

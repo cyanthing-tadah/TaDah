@@ -1,5 +1,6 @@
-import { BadRequestException, Controller, Get, Logger, Post, Query, UseInterceptors } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Get, Logger, Post, Query, UseInterceptors } from '@nestjs/common'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
+import { WeixinAccountDto } from './account.dto'
 import { AccountService } from './account.service'
 
 @Controller('account')
@@ -18,6 +19,8 @@ export class AccountController {
     throw new BadRequestException('openid 不存在')
   }
 
-  @Post('/update')
-  handleUpdateAccount() {}
+  @Post('/registerPassword')
+  async handleUpdateAccount(@Body() data: WeixinAccountDto) {
+    return await this.accountService.updateUserInfo(data)
+  }
 }

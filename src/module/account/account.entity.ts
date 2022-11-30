@@ -5,10 +5,10 @@ import { TallAmountTagEntity, TallyMonthDataEntity } from '../tally/tally.entity
 
 @Entity('weixin_user_account')
 export class WexinUserAccountEntity {
-  @PrimaryColumn()
+  @PrimaryColumn({ unique: true })
   openid: string
 
-  @Column()
+  @Column('varchar')
   nickname: string
 
   /* 用户密码 */
@@ -31,13 +31,14 @@ export class WexinUserAccountEntity {
   @OneToMany(() => TallAmountTagEntity, tallyData => tallyData.weixinUser)
   tallyTag: TallAmountTagEntity[]
 
-  @BeforeInsert()
-  @BeforeUpdate()
   /**
    * 插入前对密码hash
    */
+  @BeforeInsert()
+  @BeforeUpdate()
   async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 12)
+    console.log(this.password)
+    this.password = this.password ? await bcrypt.hash(this.password, 12) : null
   }
 
   /**

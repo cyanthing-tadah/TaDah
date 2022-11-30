@@ -6,4 +6,6 @@ export class WeixinAccountDto {
   readonly headimgurl: string
 
   readonly email: string
+
+  readonly password: string
 }

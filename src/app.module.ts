@@ -3,13 +3,14 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ServeStaticModule } from '@nestjs/serve-static'
+import { handleDBConfig } from './helper'
 import { WechatModule } from './module/wechat/wechat.module'
 import { AccountModule } from './module/account/account.module'
 import { MessageModule } from './module/message/message.module'
 import { TallyModule } from './module/tally/tally.module'
 import { RedisModule } from './module/redis/redis.module'
 import { CosModule } from './module/cos/cos.module'
-import { handleDBConfig } from './helper'
+import { AuthModule } from './module/auth/auth.module'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { handleDBConfig } from './helper'
     TallyModule,
     RedisModule,
     CosModule,
+    AuthModule,
   ],
   providers: [],
 })

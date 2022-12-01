@@ -16,7 +16,7 @@ export class AuthController {
     return this.authService.login(user)
   }
 
-  @Get('test')
+  @Get('ping')
   @UseGuards(JwtAuthGuard)
   async authTest(@AuthUser() user) {
     return user

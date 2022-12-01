@@ -41,6 +41,9 @@ export class AccountService {
    */
   async checkUserInfoRegistration(openid: string) {
     const entity = await this.wexinUserAccountEntity.findOne({ openid })
+    if (!entity) {
+      throw new NotFoundException('没有该UID对应的用户')
+    }
     return Boolean(entity.password)
   }
 

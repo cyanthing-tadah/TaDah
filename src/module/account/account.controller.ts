@@ -21,11 +21,12 @@ export class AccountController {
 
   /**
    * 首次使用 H5 应用时需要注册密码、邮箱、用户名等信息
+   * @param uid
    * @param data
    */
   @Post('/registerPassword')
-  async handleRegisterPasswordInfo(@Body() data: WeixinAccountDto) {
-    const res = await this.accountService.handleRegisterPasswordInfo(data)
+  async handleRegisterPasswordInfo(@Query('uid') uid: string, @Body() data: Omit<WeixinAccountDto, 'openid'>) {
+    const res = await this.accountService.handleRegisterPasswordInfo({ ...data, openid: uid })
     return res.affected !== 0
   }
 

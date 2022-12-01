@@ -32,7 +32,7 @@ export class CosService implements OnModuleInit {
       FilePath: filePath,
       Bucket: this.configService.get<string>('BUCKET'),
       Region: this.configService.get<string>('REGION'),
-      Key: fileData.fieldname,
+      Key: fileData.originalname,
     })
 
     unlinkSync(filePath)

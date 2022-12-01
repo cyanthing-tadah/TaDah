@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import { ExtractJwt, Strategy, VerifiedCallback } from 'passport-jwt'
+import { ExtractJwt, Strategy } from 'passport-jwt'
 import { AccountService } from '../../account/account.service'
 import { JwtPayload } from '../auth.interface'
 
@@ -16,16 +16,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   /**
    * 用户身份验证
    * @param payload
-   * @param done
    */
-  async validate(payload: JwtPayload, done: VerifiedCallback) {
+  async validate(payload: JwtPayload) {
     const { id } = payload
     const entity = await this.accountService.findByOpenid(id)
 
     if (!entity) {
-      throw new UnauthorizedException('未找到该用户')
+      throw new UnauthorizedException('该用户验证不通过')
     }
-
-    done(null, entity)
+    delete entity.password
+    return entity
   }
 }

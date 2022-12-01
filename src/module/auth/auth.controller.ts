@@ -1,27 +1,24 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common'
-import { AuthGuard } from '@nestjs/passport'
+import { Controller, Get, Post, UseGuards, UseInterceptors } from '@nestjs/common'
 import { AuthUser } from '../../core/decorators/user.decorator'
-import { LoginDto } from './auth.dto'
+import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard'
+import { LocalAuthGuard } from '../../core/guards/local-auth.guard'
+import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
 import { AuthService } from './auth.service'
 
 @Controller('auth')
+@UseInterceptors(TransformResponseInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  /**
-   * 登录
-   * @param data
-   */
   @Post('login')
-  async login(@Body() data: LoginDto) {
-    return await this.authService.login(data)
+  @UseGuards(LocalAuthGuard)
+  async login(@AuthUser() user) {
+    return this.authService.login(user)
   }
 
   @Get('test')
-  @UseGuards(AuthGuard())
+  @UseGuards(JwtAuthGuard)
   async authTest(@AuthUser() user) {
-    console.log(user)
-    return { message: 'ok' }
+    return user
   }
 }
-

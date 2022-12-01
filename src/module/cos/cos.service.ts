@@ -1,7 +1,7 @@
-import { writeFileSync } from 'fs'
+import { unlinkSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { ConfigService } from '@nestjs/config'
-import { HttpException, HttpStatus, Injectable, OnModuleInit } from '@nestjs/common'
+import { BadRequestException, HttpException, HttpStatus, Injectable, OnModuleInit } from '@nestjs/common'
 import * as COS from 'cos-nodejs-sdk-v5'
 
 @Injectable()
@@ -22,6 +22,9 @@ export class CosService implements OnModuleInit {
    * @param fileData
    */
   async handleUploadToCos(fileData: Express.Multer.File) {
+    if (!['image/jpeg', 'image/png'].includes(fileData.mimetype)) {
+      throw new BadRequestException('类型错误，请上传图片')
+    }
     const filePath = join(__dirname, '..', '../static', `${fileData.originalname}`)
     writeFileSync(filePath, fileData.buffer)
 
@@ -31,7 +34,9 @@ export class CosService implements OnModuleInit {
       Region: this.configService.get<string>('REGION'),
       Key: fileData.fieldname,
     })
-    // TODO 无论成功与否，删除本地临时文件
+
+    unlinkSync(filePath)
+
     if (statusCode === 200) {
       return `https://${Location}`
     }

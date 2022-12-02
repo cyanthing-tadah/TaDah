@@ -28,7 +28,7 @@ export class AuthService {
       return { ok: false, message: '用户UID不存在' }
     }
     if (!(await entity.comparePassword(password))) {
-      return { ok: false, message: '用户密码不匹配' }
+      return { ok: false, message: '用户密码不正确' }
     }
 
     delete entity.password

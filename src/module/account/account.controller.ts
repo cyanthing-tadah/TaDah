@@ -14,7 +14,7 @@ import {
 import { AuthUser } from '../../core/decorators/user.decorator'
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
-import { UpdateInfoDto, WeixinAccountDto } from './account.dto'
+import { UpdateInfoDto, UpdatePasswordDto, WeixinAccountDto } from './account.dto'
 import { AccountService } from './account.service'
 
 @Controller('account')
@@ -44,10 +44,30 @@ export class AccountController {
     return res.affected !== 0
   }
 
+  /**
+   * 更新用户信息
+   * @param data
+   * @param user
+   */
   @Put('/updateUserInfo')
   @UseGuards(JwtAuthGuard)
-  async handleUpdatePassword(@Body() data: UpdateInfoDto, @AuthUser() user: { openid: string }) {
+  async handleUpdateUserInfo(@Body() data: UpdateInfoDto, @AuthUser() user: { openid: string }) {
     const result = await this.accountService.updateUserInfo({ openid: user.openid, ...data })
+    if (result.affected !== 0) {
+      return true
+    }
+    throw new InternalServerErrorException('更新错误')
+  }
+
+  /**
+   * 更新用户密码
+   * @param data
+   * @param user
+   */
+  @Put('/updatePassword')
+  @UseGuards(JwtAuthGuard)
+  async handleUpdatePassword(@Body() data: UpdatePasswordDto, @AuthUser() user: { openid: string }) {
+    const result = await this.accountService.updatePassword({ openid: user.openid, ...data })
     if (result.affected !== 0) {
       return true
     }

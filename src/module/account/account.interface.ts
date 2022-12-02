@@ -4,3 +4,9 @@ export interface UpdateAccountInfo {
   email: string
   headimgurl: string
 }
+
+export interface UpdateAccountPassword {
+  openid: string
+  password: string
+  newPassword: string
+}

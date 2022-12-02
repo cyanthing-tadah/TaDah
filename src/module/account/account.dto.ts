@@ -17,3 +17,9 @@ export class UpdateInfoDto {
 
   readonly headimgurl: string
 }
+
+export class UpdatePasswordDto {
+  readonly password: string
+
+  readonly newPassword: string
+}

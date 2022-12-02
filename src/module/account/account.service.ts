@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { WexinUserAccountEntity } from './account.entity'
 import { WeixinAccountDto } from './account.dto'
-import { UpdateAccountInfo } from './account.interface'
+import { UpdateAccountInfo, UpdateAccountPassword } from './account.interface'
 
 @Injectable()
 export class AccountService {
@@ -67,7 +67,24 @@ export class AccountService {
       throw new NotFoundException('没有找到该用户')
     }
 
-    const newEntity = await this.wexinUserAccountEntity.create({ ...entity, ...data })
-    return this.wexinUserAccountEntity.update(data.openid, newEntity)
+    return this.wexinUserAccountEntity.update(data.openid, data)
+  }
+
+  /**
+   * 更新用户密码
+   * @param data
+   */
+  async updatePassword(data: UpdateAccountPassword) {
+    const entity = await this.wexinUserAccountEntity.findOne({ openid: data.openid })
+
+    if (!entity) {
+      throw new NotFoundException('没有找到该用户')
+    }
+    if (!(await entity.comparePassword(data.password))) {
+      throw new BadRequestException('密码不正确')
+    }
+
+    entity.password = data.newPassword
+    return await this.wexinUserAccountEntity.update(data.openid, entity)
   }
 }

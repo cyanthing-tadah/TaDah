@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 import { WexinUserAccountEntity } from './account.entity'
 import { WeixinAccountDto } from './account.dto'
+import { UpdateAccountInfo } from './account.interface'
 
 @Injectable()
 export class AccountService {
@@ -53,5 +54,20 @@ export class AccountService {
    */
   async findByOpenid(openid: string) {
     return this.wexinUserAccountEntity.findOne({ openid })
+  }
+
+  /**
+   * 更新用户信息
+   * @param data
+   */
+  async updateUserInfo(data: UpdateAccountInfo) {
+    const entity = await this.wexinUserAccountEntity.findOne({ openid: data.openid })
+
+    if (!entity) {
+      throw new NotFoundException('没有找到该用户')
+    }
+
+    const newEntity = await this.wexinUserAccountEntity.create({ ...entity, ...data })
+    return this.wexinUserAccountEntity.update(data.openid, newEntity)
   }
 }

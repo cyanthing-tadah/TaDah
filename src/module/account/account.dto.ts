@@ -9,3 +9,11 @@ export class WeixinAccountDto {
 
   readonly password: string
 }
+
+export class UpdateInfoDto {
+  readonly nickname: string
+
+  readonly email: string
+
+  readonly headimgurl: string
+}

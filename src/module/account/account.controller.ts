@@ -1,6 +1,20 @@
-import { BadRequestException, Body, Controller, Get, Logger, Post, Put, Query, UseInterceptors } from '@nestjs/common'
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  InternalServerErrorException,
+  Logger,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common'
+import { AuthUser } from '../../core/decorators/user.decorator'
+import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
-import { WeixinAccountDto } from './account.dto'
+import { UpdateInfoDto, WeixinAccountDto } from './account.dto'
 import { AccountService } from './account.service'
 
 @Controller('account')
@@ -30,8 +44,13 @@ export class AccountController {
     return res.affected !== 0
   }
 
-  @Put('/updatePassword')
-  async handleUpdatePassword() {
-    return ''
+  @Put('/updateUserInfo')
+  @UseGuards(JwtAuthGuard)
+  async handleUpdatePassword(@Body() data: UpdateInfoDto, @AuthUser() user: { openid: string }) {
+    const result = await this.accountService.updateUserInfo({ openid: user.openid, ...data })
+    if (result.affected !== 0) {
+      return true
+    }
+    throw new InternalServerErrorException('更新错误')
   }
 }

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { handleReturnTextMessage } from 'src/helper'
 import { AccountService } from '../account/account.service'
 import { TallyService } from '../tally/tally.service'
-import { MessageXMLData, SubscribeXMLData } from '../wechat/wechat.interface'
+import { MessageXMLData, SubscribeXMLData, XMLBaseData } from '../wechat/wechat.interface'
 import { subscribeMessage } from '../../helper/backMessage.template'
 
 enum ContentType {
@@ -11,6 +11,7 @@ enum ContentType {
   findMonthTarget = 'findMonthTarget',
   nothing = 'nothing',
   translate = 'translate',
+  application = 'application',
 }
 
 @Injectable()
@@ -32,9 +33,11 @@ export class MessageService {
         return await this.tallyService.handleMonthTarget(xml)
       case ContentType.findMonthTarget:
         return await this.tallyService.handleFindMonthData(xml)
+      case ContentType.application:
+        return this.handleOpenApplication(xml)
       case ContentType.nothing:
       default:
-        return handleReturnTextMessage(xml, 'TaDah不明白您的指令呢')
+        return handleReturnTextMessage(xml, 'TaDah不明白您的指令呢，发送《打开应用》四字指令可以打开您的专属应用')
     }
   }
 
@@ -72,6 +75,20 @@ export class MessageService {
     if (content.startsWith('翻译')) {
       return ContentType.translate
     }
+    if (content.startsWith('打开应用')) {
+      return ContentType.application
+    }
     return ContentType.nothing
+  }
+
+  /**
+   * 打开应用
+   * @param xml
+   * @private
+   */
+  private handleOpenApplication(xml: XMLBaseData) {
+    const appLink = `https://tally.cyanthing.com?uid=${xml.FromUserName}`
+    const content = `点击下方链接使用您的专属应用：${appLink}`
+    return handleReturnTextMessage(xml, content)
   }
 }

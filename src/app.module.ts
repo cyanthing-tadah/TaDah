@@ -11,6 +11,7 @@ import { TallyModule } from './module/tally/tally.module'
 import { RedisModule } from './module/redis/redis.module'
 import { CosModule } from './module/cos/cos.module'
 import { AuthModule } from './module/auth/auth.module'
+import { WeatherModule } from './module/weather/weather.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AuthModule } from './module/auth/auth.module'
     RedisModule,
     CosModule,
     AuthModule,
+    WeatherModule,
   ],
   providers: [],
 })

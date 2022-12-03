@@ -1,4 +1,5 @@
-import { Controller, Get, Query, UseInterceptors } from '@nestjs/common'
+import { Controller, Get, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
 import { WeatherService } from './weather.service'
 
@@ -12,6 +13,7 @@ export class WeatherController {
    * @param keyword
    */
   @Get('/city')
+  @UseGuards(JwtAuthGuard)
   async searchCity(@Query('keyword') keyword: string) {
     return await this.weatherService.findCity(keyword)
   }
@@ -21,8 +23,19 @@ export class WeatherController {
    * @param cityCode
    */
   @Get('/currentWeather')
+  @UseGuards(JwtAuthGuard)
   async searchCurrentWeather(@Query('cityCode') cityCode: string) {
     return await this.weatherService.currentCityWeather(cityCode)
+  }
+
+  /**
+   * 查询当前天气
+   * @param cityCode
+   */
+  @Get('/next5dayWeather')
+  @UseGuards(JwtAuthGuard)
+  async next5dayWeather(@Query('cityCode') cityCode: string) {
+    return await this.weatherService.next5dayWeather(cityCode)
   }
 
   /**
@@ -30,6 +43,7 @@ export class WeatherController {
    * @param cityCode
    */
   @Get('/next24HoursWeather')
+  @UseGuards(JwtAuthGuard)
   async next24HoursWeather(@Query('cityCode') cityCode: string) {
     return await this.weatherService.next24HoursWeather(cityCode)
   }
@@ -39,6 +53,7 @@ export class WeatherController {
    * @param cityCode
    */
   @Get('/airQuality')
+  @UseGuards(JwtAuthGuard)
   async airQuality(@Query('cityCode') cityCode: string) {
     return await this.weatherService.airQuality(cityCode)
   }
@@ -48,6 +63,7 @@ export class WeatherController {
    * @param cityCode
    */
   @Get('/liveQuality')
+  @UseGuards(JwtAuthGuard)
   async liveQuality(@Query('cityCode') cityCode: string) {
     return await this.weatherService.liveQuality(cityCode)
   }

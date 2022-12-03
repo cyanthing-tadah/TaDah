@@ -33,6 +33,34 @@ export interface CurrentWeatherItem {
   last_update: string // 数据更新时间（该城市的本地时间）
 }
 
+export interface Next5DayWeather {
+  location: {
+    id: string
+    name: string
+    country: string
+    path: string
+    timezone: string
+    timezone_offset: string
+  }
+  daily: { // 返回指定days天数的结果
+    date: string // 日期（该城市的本地时间）
+    text_day: string // 白天天气现象文字
+    code_day: string // 白天天气现象代码
+    text_night: string // 晚间天气现象文字
+    code_night: string // 晚间天气现象代码
+    high: string // 当天最高温度
+    low: string // 当天最低温度
+    precip: string // 降水概率，范围0~100，单位百分比（目前仅支持国外城市）
+    wind_direction: string // 风向文字
+    wind_direction_degree: string // 风向角度，范围0~360
+    wind_speed: string // 风速，单位km/h（当unit=c时）、mph（当unit=f时）
+    wind_scale: string // 风力等级
+    rainfall: string // 降水量，单位mm
+    humidity: string // 相对湿度，0~100，单位为百分比
+  }[]
+  last_update: string // 数据更新时间（该城市的本地时间）
+}
+
 export interface OneDayEveryHourWeather {
   location: {
     id: string

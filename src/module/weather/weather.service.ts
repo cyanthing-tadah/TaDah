@@ -3,7 +3,14 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { catchError, firstValueFrom } from 'rxjs'
 import { ConfigService } from '@nestjs/config'
 import { AxiosError } from 'axios'
-import { AirQuality, CityListItem, CurrentWeatherItem, LiveQuality, OneDayEveryHourWeather } from './weather.interface'
+import {
+  AirQuality,
+  CityListItem,
+  CurrentWeatherItem,
+  LiveQuality,
+  Next5DayWeather,
+  OneDayEveryHourWeather,
+} from './weather.interface'
 
 @Injectable()
 export class WeatherService {
@@ -39,6 +46,21 @@ export class WeatherService {
       catchError((error: AxiosError) => {
         this.logger.error(error.response.data)
         throw new InternalServerErrorException('获取当日天气错误')
+      }),
+    ))
+    return data
+  }
+
+  /**
+   * 当前城市当日天气
+   * @param cityCode
+   */
+  async next5dayWeather(cityCode: string) {
+    const { data } = await firstValueFrom(this.httpService.get<{ results: Next5DayWeather[] }>(
+      `https://api.seniverse.com/v3/weather/daily.json?key=${this.privateKey}&location=${cityCode}&start=1&days=5`).pipe(
+      catchError((error: AxiosError) => {
+        this.logger.error(error.response.data)
+        throw new InternalServerErrorException('获取未来五日天气错误')
       }),
     ))
     return data

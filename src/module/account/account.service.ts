@@ -14,8 +14,14 @@ export class AccountService {
    * @param userInfo
    */
   async saveUserInfo(userInfo: WeixinAccountDto) {
-    const entity = await this.wexinUserAccountEntity.create(userInfo)
-    return this.wexinUserAccountEntity.save(entity)
+    const entity = await this.wexinUserAccountEntity.findOne({ openid: userInfo.openid })
+
+    if (!entity) {
+      const newEntity = await this.wexinUserAccountEntity.create(userInfo)
+      return this.wexinUserAccountEntity.save(newEntity)
+    }
+
+    return ''
   }
 
   /**

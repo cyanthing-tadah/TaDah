@@ -87,7 +87,7 @@ export class MessageService {
    * @private
    */
   private handleOpenApplication(xml: XMLBaseData) {
-    const appLink = `https://tally.cyanthing.com?uid=${xml.FromUserName}`
+    const appLink = `https://tally.cyanthing.com/appDashboard?uid=${xml.FromUserName}`
     const content = `点击下方链接使用您的专属应用：${appLink}`
     return handleReturnTextMessage(xml, content)
   }

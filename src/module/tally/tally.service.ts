@@ -231,6 +231,9 @@ export class TallyService {
     const year = dayjs(xml.CreateTime * 1000).year()
     const month = dayjs(xml.CreateTime * 1000).month() + 1
     const monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid: xml.FromUserName } })
+    if (!monthData) {
+      return handleReturnTextMessage(xml, `👻 哈？经过一番查找，您本月还未记账呢${exampleText}`)
+    }
     const { currentSalary, residueTarget } = await this.computeCurrentCount(monthData)
     if (monthData.income && monthData.target) {
       return handleReturnTextMessage(xml, `🧐 嗯！经过一番查找，您目前的消费：\n月工资余额${(currentSalary / 100).toFixed(2)}元\n月目标开支余额${(residueTarget / 100).toFixed(2)}元`)

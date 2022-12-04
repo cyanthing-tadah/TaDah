@@ -26,7 +26,7 @@ export class ExpressageService {
     const companies = await this.recognitionExpress(num)
     if (companies.length) {
       const company = companies[0]
-      const param = { com: company.comCode, num }
+      const param = { com: company.comCode, num, resultv2: 1 }
       const sign = this.md5(JSON.stringify(param) + this.privateKey + this.customer).toUpperCase()
       const { data } = await firstValueFrom(
         this.httpService.post<ExpressInfo>(
@@ -39,7 +39,7 @@ export class ExpressageService {
             throw new InternalServerErrorException('无法查询到快递')
           }),
         ))
-      if (data.result === false) {
+      if (data.result === false || data.status !== '200') {
         throw new InternalServerErrorException('无法查询到快递')
       }
       return { location: data.data, company: company.name }

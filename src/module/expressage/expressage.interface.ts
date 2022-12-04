@@ -15,7 +15,10 @@ export interface ExpressInfo {
   state: string
   data: {
     time: string
-    ftime: string
     context: string
+    ftime: string
+    areaCode: string
+    areaName: string
+    status: string
   }[]
 }

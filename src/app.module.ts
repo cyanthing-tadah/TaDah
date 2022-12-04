@@ -12,6 +12,7 @@ import { RedisModule } from './module/redis/redis.module'
 import { CosModule } from './module/cos/cos.module'
 import { AuthModule } from './module/auth/auth.module'
 import { WeatherModule } from './module/weather/weather.module'
+import { ExpressageModule } from './module/expressage/expressage.module'
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { WeatherModule } from './module/weather/weather.module'
     CosModule,
     AuthModule,
     WeatherModule,
+    ExpressageModule,
   ],
   providers: [],
 })

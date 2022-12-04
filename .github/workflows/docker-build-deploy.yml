@@ -35,8 +35,6 @@ jobs:
           --build-arg "SALT=${{ secrets.SALT }}"
           --build-arg "PRIVATEKEY=${{ secrets.PRIVATEKEY }}"
           --build-arg "WEATHER_PRIVATE_KEY=${{ secrets.WEATHER_PRIVATE_KEY }}"
-          --build-arg "EXPRESS_PRIVATE_KEY=${{ secrets.EXPRESS_PRIVATE_KEY }}"
-          --build-arg "EXPRESS_CUSTOMER=${{ secrets.EXPRESS_CUSTOMER }}"
           --file Dockerfile
           --tag hkccr.ccs.tencentyun.com/cyanthing/ta_dah .
       - name: login tencent image hub

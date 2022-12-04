@@ -21,7 +21,8 @@ export REGION=$REGION
 export PRIVATEKEY=$PRIVATEKEY
 export SALT=$SALT
 export WEATHER_PRIVATE_KEY=$WEATHER_PRIVATE_KEY
-
+export EXPRESS_CUSTOMER=$EXPRESS_CUSTOMER
+export EXPRESS_PRIVATE_KEY=$EXPRESS_PRIVATE_KEY
 
 echo "-------------master server ------------------"
 node /app/dist/main.js

@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config'
 import { AxiosError } from 'axios'
 import * as qs from 'qs'
 import { catchError, firstValueFrom } from 'rxjs'
+import { ExpressageMapDto } from './expressage.dto'
 import { CompanyItem, ExpressInfo } from './expressage.interface'
 
 @Injectable()
@@ -26,7 +27,7 @@ export class ExpressageService {
     const companies = await this.recognitionExpress(num)
     if (companies.length) {
       const company = companies[0]
-      const param = { com: company.comCode, num, resultv2: 1 }
+      const param = { com: company.comCode, num, resultv2: 4 }
       const sign = this.md5(JSON.stringify(param) + this.privateKey + this.customer).toUpperCase()
       const { data } = await firstValueFrom(
         this.httpService.post<ExpressInfo>(
@@ -42,11 +43,34 @@ export class ExpressageService {
       if (data.result === false || data.status !== '200') {
         throw new InternalServerErrorException('无法查询到快递')
       }
-      return { location: data.data, company: company.name }
+      return { ...data, comZh: company.name }
     }
     else {
       throw new InternalServerErrorException('没有找到快递公司')
     }
+  }
+
+  /**
+   * 查询快递地图信息
+   * @param param
+   */
+  async expressMap(param: ExpressageMapDto) {
+    const sign = this.md5(JSON.stringify(param) + this.privateKey + this.customer).toUpperCase()
+    const { data } = await firstValueFrom(
+      this.httpService.post<ExpressInfo>(
+        'https://poll.kuaidi100.com/poll/maptrack.do',
+        qs.stringify({ param: JSON.stringify(param), customer: this.customer, sign }),
+        { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
+      ).pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error.response.data)
+          throw new InternalServerErrorException('无法查询到地图信息')
+        }),
+      ))
+    if (data.result === false || data.status !== '200') {
+      throw new InternalServerErrorException('无法查询到地图信息')
+    }
+    return data
   }
 
   /**

@@ -39,6 +39,16 @@ export class WeatherController {
   }
 
   /**
+   * 未来城市灾害预警
+   * @param cityCode
+   */
+  @Get('/nextAlarm')
+  @UseGuards(JwtAuthGuard)
+  async nextAlarm(@Query('cityCode') cityCode: string) {
+    return await this.weatherService.nextAlarm(cityCode)
+  }
+
+  /**
    * 查询24小时天气
    * @param cityCode
    */

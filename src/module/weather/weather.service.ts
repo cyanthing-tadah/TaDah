@@ -8,7 +8,7 @@ import {
   CityListItem,
   CurrentWeatherItem,
   LiveQuality,
-  Next5DayWeather,
+  Next5DayWeather, NextAlarmItem,
   OneDayEveryHourWeather,
 } from './weather.interface'
 
@@ -52,7 +52,22 @@ export class WeatherService {
   }
 
   /**
-   * 当前城市当日天气
+   * 当前城市未来灾害预警
+   * @param cityCode
+   */
+  async nextAlarm(cityCode: string) {
+    const { data } = await firstValueFrom(this.httpService.get<{ results: NextAlarmItem[] }>(
+      `https://api.seniverse.com/v3/weather/alarm.json?detail=more&key=${this.privateKey}&location=${cityCode}`).pipe(
+      catchError((error: AxiosError) => {
+        this.logger.error(error.response.data)
+        throw new InternalServerErrorException('获取灾害预警错误')
+      }),
+    ))
+    return data
+  }
+
+  /**
+   * 当前城市未来5日天气
    * @param cityCode
    */
   async next5dayWeather(cityCode: string) {

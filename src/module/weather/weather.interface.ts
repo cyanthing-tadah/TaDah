@@ -8,14 +8,7 @@ export interface CityListItem {
 }
 
 export interface CurrentWeatherItem {
-  location: {
-    id: string
-    name: string
-    country: string
-    path: string
-    timezone: string
-    timezone_offset: string
-  }
+  location: CityListItem
   now: {
     text: string // 天气现象文字
     code: string // 天气现象代码
@@ -33,15 +26,22 @@ export interface CurrentWeatherItem {
   last_update: string // 数据更新时间（该城市的本地时间）
 }
 
+export interface NextAlarmItem { // 当前全国或指定城市的气象灾害预警数组
+  location: CityListItem
+  alarms: { // 该城市所有的灾害预警数组
+    alarm_id: string // 预警唯一ID，可用于去重
+    title: string
+    type: string
+    level: string
+    region_id: string // 国家行政区划编码
+    status: string // V3版本默认为空
+    description: string
+    pub_date: string // 各级政府发布预警时间
+  }[]
+}
+
 export interface Next5DayWeather {
-  location: {
-    id: string
-    name: string
-    country: string
-    path: string
-    timezone: string
-    timezone_offset: string
-  }
+  location: CityListItem
   daily: { // 返回指定days天数的结果
     date: string // 日期（该城市的本地时间）
     text_day: string // 白天天气现象文字
@@ -62,14 +62,7 @@ export interface Next5DayWeather {
 }
 
 export interface OneDayEveryHourWeather {
-  location: {
-    id: string
-    name: string
-    country: string
-    path: string
-    timezone: string
-    timezone_offset: string
-  }
+  location: CityListItem
   hourly: { // 逐小时天气预报数组，数量可由start和hours参数控制，最多24个对象。
     time: string // 时间
     text: string // 天气现象文字
@@ -82,14 +75,7 @@ export interface OneDayEveryHourWeather {
 }
 
 export interface AirQuality {
-  location: {
-    id: string
-    name: string
-    country: string
-    path: string
-    timezone: string
-    timezone_offset: string
-  }
+  location: CityListItem
   air: {
     city: {
       aqi: string // 空气质量指数(AQI)是描述空气质量状况的定量指数
@@ -107,14 +93,7 @@ export interface AirQuality {
 }
 
 export interface LiveQuality {
-  location: {
-    id: string
-    name: string
-    country: string
-    path: string
-    timezone: string
-    timezone_offset: string
-  }
+  location: CityListItem
   suggestion: {
     ac: {
       // 空调开启

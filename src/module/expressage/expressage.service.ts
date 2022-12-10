@@ -45,7 +45,7 @@ export class ExpressageService {
 
     const list = entity.expressNum
     list.push(expressNum)
-    entity.expressNum = list
+    entity.expressNum = Array.from(new Set(list))
     const res = await this.expressRecordInfoEntity.update(openid, entity)
     return res.affected !== 0
   }
@@ -63,6 +63,29 @@ export class ExpressageService {
     entity.expressNum = entity.expressNum.filter(item => item !== expressNum)
     await this.expressRecordInfoEntity.update(openid, entity)
     return true
+  }
+
+  /**
+   * 查询所有存储的物流单号对应的物流信息
+   * @param openid
+   */
+  async findAllExpressInfo(openid: string) {
+    const entity = await this.expressRecordInfoEntity.findOne(openid)
+    if (!entity) {
+      return []
+    }
+    const { expressNum } = entity
+    const res: (Partial<ExpressInfo> & { comZh?: string; error: boolean; errorInfo: string })[] = []
+    for (let i = 0; i < expressNum.length; i++) {
+      try {
+        const temp = await this.expressRoad(expressNum[i])
+        res.push({ ...temp, error: false, errorInfo: '' })
+      }
+      catch (error) {
+        res.push({ error: false, errorInfo: error?.response?.message })
+      }
+    }
+    return res
   }
 
   /**

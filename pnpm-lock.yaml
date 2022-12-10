@@ -34,6 +34,7 @@ specifiers:
   dayjs: ^1.11.6
   eslint: ^8.26.0
   express: ^4.18.2
+  helmet: ^6.0.1
   ioredis: ^5.2.4
   mysql: ^2.18.1
   passport: ^0.6.0
@@ -72,6 +73,7 @@ dependencies:
   crypto: 1.0.1
   dayjs: 1.11.6
   express: 4.18.2
+  helmet: 6.0.1
   ioredis: 5.2.4
   mysql: 2.18.1
   passport: 0.6.0
@@ -3081,6 +3083,11 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
+
+  /helmet/6.0.1:
+    resolution: {integrity: sha512-8wo+VdQhTMVBMCITYZaGTbE4lvlthelPYSvoyNvk4RECTmrVjMerp9RfUOQXZWLvCcAn1pKj7ZRxK4lI9Alrcw==}
+    engines: {node: '>=14.0.0'}
+    dev: false
 
   /hexoid/1.0.0:
     resolution: {integrity: sha512-QFLV0taWQOZtvIRIAdBChesmogZrtuXvVWsFHZTk2SU+anspqZ2vMnoLg7IE1+Uk16N19APic1BuF8bC8c2m5g==}

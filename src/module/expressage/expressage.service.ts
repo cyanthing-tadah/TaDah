@@ -1,8 +1,8 @@
 import * as crypto from 'crypto'
-import { InjectRepository } from '@nestjs/typeorm'
 import { HttpService } from '@nestjs/axios'
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common'
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
+import { InjectRepository } from '@nestjs/typeorm'
 import { AxiosError } from 'axios'
 import * as qs from 'qs'
 import { catchError, firstValueFrom } from 'rxjs'
@@ -33,6 +33,36 @@ export class ExpressageService {
    */
   async addExpressRecord(expressNum: string, openid: string) {
     const entity = await this.expressRecordInfoEntity.findOne(openid)
+    if (!entity) {
+      const newEntity = await this.expressRecordInfoEntity.create({ openid, expressNum: [expressNum] })
+      await this.expressRecordInfoEntity.save(newEntity)
+      return true
+    }
+
+    if (entity.expressNum.length >= 4) {
+      throw new BadRequestException('最多缓存四个物流单号')
+    }
+
+    const list = entity.expressNum
+    list.push(expressNum)
+    entity.expressNum = list
+    const res = await this.expressRecordInfoEntity.update(openid, entity)
+    return res.affected !== 0
+  }
+
+  /**
+   * 删除一个快递单号记录
+   * @param expressNum
+   * @param openid
+   */
+  async deleteExpressRecord(expressNum: string, openid: string) {
+    const entity = await this.expressRecordInfoEntity.findOne(openid)
+    if (!entity) {
+      throw new BadRequestException('账户不存在物流单记录')
+    }
+    entity.expressNum = entity.expressNum.filter(item => item !== expressNum)
+    await this.expressRecordInfoEntity.update(openid, entity)
+    return true
   }
 
   /**

@@ -3,7 +3,7 @@ import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm'
 @Entity('express_record_info')
 export class ExpressRecordInfoEntity {
   @PrimaryColumn({ unique: true })
-  openid: number
+  openid: string
 
   @Column('simple-array')
   expressNum: string[]

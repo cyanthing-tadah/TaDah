@@ -1,8 +1,11 @@
 import { HttpService } from '@nestjs/axios'
-import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common'
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
 import { catchError, firstValueFrom } from 'rxjs'
 import { ConfigService } from '@nestjs/config'
 import { AxiosError } from 'axios'
+import { Repository } from 'typeorm'
+import { WeatherCityInfoEntity } from './weather.entity'
 import {
   AirQuality,
   CityListItem,
@@ -17,8 +20,53 @@ export class WeatherService {
   private readonly logger = new Logger(WeatherService.name)
   private privateKey: string
 
-  constructor(private readonly httpService: HttpService, private readonly configService: ConfigService) {
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+    @InjectRepository(WeatherCityInfoEntity) private readonly weatherCityInfoEntity: Repository<WeatherCityInfoEntity>,
+  ) {
     this.privateKey = this.configService.get<string>('WEATHER_PRIVATE_KEY')
+  }
+
+  /**
+   * 增加一条城市记录
+   * @param cityCode
+   * @param cityName
+   * @param openid
+   */
+  async addWeatherCityInfo(cityCode: string, cityName: string, openid: string) {
+    const entity = await this.weatherCityInfoEntity.findOne(openid)
+    if (!entity) {
+      const newEntity = await this.weatherCityInfoEntity.create({ openid, cities: [{ cityCode, cityName }] })
+      await this.weatherCityInfoEntity.save(newEntity)
+      return true
+    }
+
+    if (entity.cities.length >= 4) {
+      throw new BadRequestException('最多缓存四个城市天气')
+    }
+
+    const list = entity.cities
+    list.push({ cityCode, cityName })
+    entity.cities = list
+    const res = await this.weatherCityInfoEntity.update(openid, entity)
+    return res.affected !== 0
+  }
+
+  /**
+   * 删除一个城市信息
+   * @param cityCode
+   * @param cityName
+   * @param openid
+   */
+  async deleteWeatherCityInfo(cityCode: string, cityName: string, openid: string) {
+    const entity = await this.weatherCityInfoEntity.findOne(openid)
+    if (!entity) {
+      throw new BadRequestException('账户不存在城市信息')
+    }
+    entity.cities = entity.cities.filter(item => item.cityCode !== cityCode)
+    await this.weatherCityInfoEntity.update(openid, entity)
+    return true
   }
 
   /**

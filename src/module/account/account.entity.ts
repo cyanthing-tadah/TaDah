@@ -2,7 +2,9 @@ import * as process from 'process'
 import { BeforeInsert, BeforeUpdate, Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn } from 'typeorm'
 import { Exclude } from 'class-transformer'
 import * as bcrypt from 'bcrypt'
+import { ExpressRecordInfoEntity } from '../expressage/expressage.entity'
 import { TallAmountTagEntity, TallyMonthDataEntity } from '../tally/tally.entity'
+import { WeatherCityInfoEntity } from '../weather/weather.entity'
 
 @Entity('weixin_user_account')
 export class WexinUserAccountEntity {
@@ -31,6 +33,12 @@ export class WexinUserAccountEntity {
 
   @OneToMany(() => TallAmountTagEntity, tallyData => tallyData.weixinUser)
   tallyTag: TallAmountTagEntity[]
+
+  @OneToMany(() => WeatherCityInfoEntity, weatherCityInfo => weatherCityInfo.id)
+  weatherCityInfo: WeatherCityInfoEntity
+
+  @OneToMany(() => ExpressRecordInfoEntity, expressRecordInfo => expressRecordInfo.id)
+  expressRecordInfo: ExpressRecordInfoEntity
 
   /**
    * 插入前对密码hash

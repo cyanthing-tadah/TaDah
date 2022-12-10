@@ -1,11 +1,14 @@
 import * as crypto from 'crypto'
+import { InjectRepository } from '@nestjs/typeorm'
 import { HttpService } from '@nestjs/axios'
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { AxiosError } from 'axios'
 import * as qs from 'qs'
 import { catchError, firstValueFrom } from 'rxjs'
+import { Repository } from 'typeorm'
 import { ExpressageMapDto } from './expressage.dto'
+import { ExpressRecordInfoEntity } from './expressage.entity'
 import { CompanyItem, ExpressInfo } from './expressage.interface'
 
 @Injectable()
@@ -14,9 +17,22 @@ export class ExpressageService {
   private privateKey: string
   private customer: string
 
-  constructor(private readonly httpService: HttpService, private readonly configService: ConfigService) {
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+    @InjectRepository(ExpressRecordInfoEntity) private readonly expressRecordInfoEntity: Repository<ExpressRecordInfoEntity>,
+  ) {
     this.privateKey = this.configService.get<string>('EXPRESS_PRIVATE_KEY')
     this.customer = this.configService.get<string>('EXPRESS_CUSTOMER')
+  }
+
+  /**
+   * 增加一条快递记录
+   * @param expressNum
+   * @param openid
+   */
+  async addExpressRecord(expressNum: string, openid: string) {
+    const entity = await this.expressRecordInfoEntity.findOne(openid)
   }
 
   /**

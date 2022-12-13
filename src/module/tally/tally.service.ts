@@ -280,12 +280,12 @@ export class TallyService {
   async handleSetMonthData(income: number, target: number, openid: string) {
     const year = dayjs().year()
     const month = dayjs().month() + 1
-    let monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid } })
+    const monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid } })
     if (!monthData) {
-      monthData = await this.tallyMonthDataEntity.create({ year, month, income, target, weixinUser: { openid } })
+      const newMonthData = await this.tallyMonthDataEntity.create({ year, month, income, target, weixinUser: { openid } })
+      return await this.tallyMonthDataEntity.save(newMonthData)
     }
 
-    await this.tallyMonthDataEntity.update(monthData.id, { year, month, income, target, weixinUser: { openid } })
     monthData.income = income
     monthData.target = target
     return await this.tallyMonthDataEntity.save(monthData)
@@ -330,7 +330,7 @@ export class TallyService {
     const monthDataEntity = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid } })
     const tagEntity = await this.tallAmountTagEntity.findOne(tagId)
     if (!monthDataEntity) {
-      throw new BadRequestException('本月资金信息缺失')
+      throw new BadRequestException('本月资金信息缺失，请在上一页补充')
     }
     if (!tagEntity) {
       throw new BadRequestException('请先创建标签s')

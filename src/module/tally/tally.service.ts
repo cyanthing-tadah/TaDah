@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import * as dayjs from 'dayjs'
 import { Repository } from 'typeorm'
@@ -289,5 +289,59 @@ export class TallyService {
     monthData.income = income
     monthData.target = target
     return await this.tallyMonthDataEntity.save(monthData)
+  }
+
+  /**
+   * 加载用户 Tag 列表
+   * @param openid
+   */
+  async loadTagList(openid: string) {
+    return this.tallAmountTagEntity.find({ weixinUser: { openid } })
+  }
+
+  /**
+   * 设置标签
+   * @param tagId
+   * @param tagName
+   * @param emojiName
+   * @param openid
+   */
+  async changeOrSetTag(tagId: number, tagName: string, emojiName: string, openid: string) {
+    const entity = await this.tallAmountTagEntity.findOne({ tagId })
+
+    if (!entity) {
+      const newEntity = await this.tallAmountTagEntity.create({ tagName, emojiName, weixinUser: { openid } })
+      await this.tallAmountTagEntity.save(newEntity)
+      return true
+    }
+
+    entity.tagName = tagName
+    entity.emojiName = emojiName
+    const res = await this.tallAmountTagEntity.update(tagId, entity)
+    return res.affected !== 0
+  }
+
+  /**
+   * 创建记账
+   * @param data
+   */
+  async handleAddRecord(data: { openid: string; year: number; month: number; count: number; description: string; tagId: number; amountType: 0 | 1 }) {
+    const { year, month, openid, tagId, count, description, amountType } = data
+    const monthDataEntity = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid } })
+    const tagEntity = await this.tallAmountTagEntity.findOne(tagId)
+    if (!monthDataEntity) {
+      throw new BadRequestException('本月资金信息缺失')
+    }
+    if (!tagEntity) {
+      throw new BadRequestException('请先创建标签s')
+    }
+    const entity = await this.tallyDataListEntity.create({
+      count,
+      amountType,
+      monthData: monthDataEntity,
+      amountTag: tagEntity,
+      description,
+    })
+    return await this.tallyDataListEntity.save(entity)
   }
 }

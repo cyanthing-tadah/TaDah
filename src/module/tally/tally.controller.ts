@@ -1,4 +1,4 @@
-import { Controller, Get, ParseIntPipe, Query, UseGuards, UseInterceptors } from '@nestjs/common'
+import { Controller, Get, ParseIntPipe, Post, Query, UseGuards, UseInterceptors } from '@nestjs/common'
 import { AuthUser } from '../../core/decorators/user.decorator'
 import { JwtAuthGuard } from '../../core/guards/jwt-auth.guard'
 import { TransformResponseInterceptor } from '../../core/interceptors/transform-response.interceptor'
@@ -24,5 +24,11 @@ export class TallyController {
   @UseGuards(JwtAuthGuard)
   handleLoadTargetMonthList(@Query('id', ParseIntPipe) id: number) {
     return this.tallyService.handleLoadTargetMonthList(id)
+  }
+
+  @Post('/handleSetMonthData')
+  @UseGuards(JwtAuthGuard)
+  handleSetMonthData(@Query('income', ParseIntPipe) income: number, @Query('target', ParseIntPipe) target: number, @AuthUser() user: Omit<WexinUserAccountEntity, 'password'>) {
+    return this.tallyService.handleSetMonthData(income, target, user.openid)
   }
 }

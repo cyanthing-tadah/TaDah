@@ -270,4 +270,24 @@ export class TallyService {
       .orderBy('tallyData.createTime', 'DESC')
     return await tallyDataListQueryBuilder.getMany()
   }
+
+  /**
+   * 设置或更新月度数据
+   * @param income
+   * @param target
+   * @param openid
+   */
+  async handleSetMonthData(income: number, target: number, openid: string) {
+    const year = dayjs().year()
+    const month = dayjs().month() + 1
+    let monthData = await this.tallyMonthDataEntity.findOne({ year, month, weixinUser: { openid } })
+    if (!monthData) {
+      monthData = await this.tallyMonthDataEntity.create({ year, month, income, target, weixinUser: { openid } })
+    }
+
+    await this.tallyMonthDataEntity.update(monthData.id, { year, month, income, target, weixinUser: { openid } })
+    monthData.income = income
+    monthData.target = target
+    return await this.tallyMonthDataEntity.save(monthData)
+  }
 }

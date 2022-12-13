@@ -51,7 +51,7 @@ export class MessageService {
     switch (Event) {
       case 'subscribe':
         await this.accountService.saveUserInfo({ openid: xml.FromUserName, headimgurl: '', nickname: '', email: '', password: null })
-        return handleReturnTextMessage(xml, subscribeMessage)
+        return handleReturnTextMessage(xml, `${subscribeMessage}您的专属应用是：https://tally.cyanthing.com/appDashboard?uid=${xml.FromUserName}`)
       case 'unsubscribe':
       default:
         return 'success'

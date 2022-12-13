@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
-import { Repository } from 'typeorm'
 import * as dayjs from 'dayjs'
+import { Repository } from 'typeorm'
 import { handleReturnTextMessage } from '../../helper'
 import { WexinUserAccountEntity } from '../account/account.entity'
 import { MessageXMLData } from '../wechat/wechat.interface'
@@ -239,5 +239,35 @@ export class TallyService {
       return handleReturnTextMessage(xml, `🧐 嗯！经过一番查找，您目前的消费：\n月工资余额${(currentSalary / 100).toFixed(2)}元\n月目标开支余额${(residueTarget / 100).toFixed(2)}元`)
     }
     return handleReturnTextMessage(xml, `💁🏻 哦！您本月还没有设置收入与目标开支呢\n您目前的消费：\n${(currentSalary / 100).toFixed(2)}元`)
+  }
+
+  /**
+   * 查询目标月的消费情况
+   * @param openid
+   * TODO 不分页可能存在一些问题
+   */
+  async handleFindTargetMonthData(openid: string) {
+    const monthDataList = await this.tallyMonthDataEntity.find({ where: { weixinUser: { openid } }, order: { year: 'ASC', month: 'ASC' } })
+    const result: (TallyMonthDataEntity & { currentSalary: number; residueTarget: number })[] = []
+    for (let i = 0; i < monthDataList.length; i++) {
+      const { currentSalary, residueTarget } = await this.computeCurrentCount(monthDataList[i])
+      result.push({ ...monthDataList[i], currentSalary, residueTarget, income: monthDataList[i].income * 100, target: monthDataList[i].target * 100 })
+    }
+    return result
+  }
+
+  /**
+   * 查询账单
+   * @param id
+   * TODO 不分页可能存在性能问题
+   */
+  async handleLoadTargetMonthList(id: number) {
+    const tallyDataListQueryBuilder = this.tallyDataListEntity.createQueryBuilder('tallyData')
+    tallyDataListQueryBuilder
+      .where('tallyData.delete=false')
+      .where('monthDataId=:id', { id })
+      .leftJoinAndSelect('tallyData.amountTag', 'amountTag')
+      .orderBy('tallyData.createTime', 'DESC')
+    return await tallyDataListQueryBuilder.getMany()
   }
 }

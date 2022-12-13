@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { WexinUserAccountEntity } from '../account/account.entity'
 import { TallAmountTagEntity, TallyDataListEntity, TallyMonthDataEntity } from './tally.entity'
 import { TallyService } from './tally.service'
+import { TallyController } from './tally.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -13,5 +14,6 @@ import { TallyService } from './tally.service'
   ],
   providers: [TallyService],
   exports: [TallyService],
+  controllers: [TallyController],
 })
 export class TallyModule {}
